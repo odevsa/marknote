@@ -1,29 +1,26 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import { FileText, Plus, Edit3, Trash2, Clock } from 'lucide-svelte';
-  import { marked } from 'marked';
-  import DOMPurify from 'dompurify';
+  import { api, type RecentNote } from '$lib/api/client';
+  import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
   import Header from '$lib/components/layout/Header.svelte';
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
   import StatusBar from '$lib/components/layout/StatusBar.svelte';
-  import MarkdownEditor from '$lib/components/editor/MarkdownEditor.svelte';
-  import PromptModal from '$lib/components/ui/PromptModal.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
   import Logo from '$lib/components/ui/Logo.svelte';
+  import PromptModal from '$lib/components/ui/PromptModal.svelte';
+  import { t } from '$lib/i18n';
+  import { authStore } from '$lib/stores/auth';
   import {
-    activeNote,
-    openNote,
-    fileTree,
-    loadTree,
-    createItem,
-    deleteItem,
-    parseCurrentRoute
+      activeNote,
+      createItem,
+      deleteItem,
+      fileTree,
+      loadTree,
+      openNote,
+      parseCurrentRoute
   } from '$lib/stores/notes';
   import { appSettings, loadAppSettings } from '$lib/stores/settings';
-  import { api, type RecentNote } from '$lib/api/client';
-  import { t } from '$lib/i18n';
-
-  import { authStore } from '$lib/stores/auth';
+  import { renderMarkdown } from '$lib/utils/markdown';
+  import { Clock, Edit3, FileText, Plus, Trash2 } from 'lucide-svelte';
 
   let isQuickCreateOpen = $state(false);
   let isDeleteOpen = $state(false);
@@ -117,12 +114,7 @@
     if (!content || !content.trim()) {
       return `<p class="italic opacity-60">${$t('editor.emptyNotePlaceholder')}</p>`;
     }
-    try {
-      const raw = marked.parse(content, { async: false }) as string;
-      return DOMPurify.sanitize(raw);
-    } catch (_) {
-      return content;
-    }
+    return renderMarkdown(content);
   }
 </script>
 
@@ -161,11 +153,11 @@
               {$t('common.loading')}
             </div>
           {:else}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
               {#each recentNotes as note (note.path)}
                 <div
                   onclick={() => handleCardClick(note.path)}
-                  class="group relative rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-[var(--accent)] hover:shadow-lg transition-all duration-200 flex flex-col h-64 overflow-hidden cursor-pointer"
+                  class="group relative rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-[var(--accent)] hover:shadow-lg transition-all duration-200 flex flex-col max-h-256 lg:h-64 overflow-hidden cursor-pointer"
                   role="button"
                   tabindex="0"
                   onkeydown={(e) => e.key === 'Enter' && handleCardClick(note.path)}
@@ -200,7 +192,7 @@
 
                   <!-- Card Body / Markdown Preview -->
                   <div class="p-4 flex-1 overflow-hidden relative">
-                    <div class="card-markdown-preview opacity-90">
+                    <div class="markdown-body card-markdown-preview opacity-90">
                       {@html renderPreview(note.content)}
                     </div>
                     <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--card-bg)] to-transparent pointer-events-none"></div>

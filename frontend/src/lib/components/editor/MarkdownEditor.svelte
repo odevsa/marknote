@@ -1,33 +1,32 @@
 <script lang="ts">
-  import { onMount, onDestroy } from 'svelte';
-  import { marked } from 'marked';
-  import hljs from 'highlight.js';
-  import DOMPurify from 'dompurify';
-  import { EditorView, lineNumbers, keymap } from '@codemirror/view';
-  import { EditorState } from '@codemirror/state';
-  import { history, defaultKeymap, historyKeymap, indentWithTab } from '@codemirror/commands';
+  import { t as i18n } from '$lib/i18n';
+  import { activeNote, clearLocalDraft, closeNote, getRouteUrl, saveCurrentNote, saveLocalDraft } from '$lib/stores/notes';
+  import { appSettings } from '$lib/stores/settings';
+  import { editorViewMode, type ViewMode } from '$lib/stores/ui';
+  import { renderMarkdown } from '$lib/utils/markdown';
+  import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
   import { markdown } from '@codemirror/lang-markdown';
   import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+  import { EditorState } from '@codemirror/state';
+  import { EditorView, keymap, lineNumbers } from '@codemirror/view';
   import { tags as t } from '@lezer/highlight';
   import {
-    Bold,
-    Italic,
-    Heading,
-    Code,
-    Quote,
-    List,
-    ListOrdered,
-    Link,
-    Table,
-    Columns,
-    Edit3,
-    Eye,
-    Save,
-    X
+      Bold,
+      Code,
+      Columns,
+      Edit3,
+      Eye,
+      Heading,
+      Italic,
+      Link,
+      List,
+      ListOrdered,
+      Quote,
+      Save,
+      Table,
+      X
   } from 'lucide-svelte';
-  import { activeNote, saveCurrentNote, closeNote, getRouteUrl, saveLocalDraft, clearLocalDraft } from '$lib/stores/notes';
-  import { editorViewMode, type ViewMode } from '$lib/stores/ui';
-  import { appSettings } from '$lib/stores/settings';
+  import { onDestroy, onMount } from 'svelte';
 
   function changeViewMode(mode: ViewMode) {
     editorViewMode.set(mode);
@@ -36,25 +35,6 @@
       window.history.pushState({ path: $activeNote.path, mode }, '', targetUrl);
     }
   }
-  import { t as i18n } from '$lib/i18n';
-
-  // Configure syntax highlighting for code blocks in preview
-  marked.use({
-    renderer: {
-      code({ text, lang }: { text: string; lang?: string }) {
-        const validLang = !!(lang && hljs.getLanguage(lang));
-        let highlighted = '';
-        try {
-          highlighted = validLang
-            ? hljs.highlight(text, { language: lang }).value
-            : hljs.highlightAuto(text).value;
-        } catch (err) {
-          highlighted = text;
-        }
-        return `<pre class="hljs"><code class="${validLang ? 'language-' + lang : ''}">${highlighted}</code></pre>\n`;
-      }
-    }
-  });
 
   // Define markdown syntax highlighting style using active theme variables
   const markdownHighlightStyle = HighlightStyle.define([
@@ -309,12 +289,7 @@
 
   let renderedHtml = $derived.by(() => {
     if (!$activeNote?.content) return '';
-    try {
-      const raw = marked.parse($activeNote.content, { async: false }) as string;
-      return DOMPurify.sanitize(raw);
-    } catch (e) {
-      return '<p class="text-red-500">Error rendering markdown</p>';
-    }
+    return renderMarkdown($activeNote.content);
   });
 </script>
 

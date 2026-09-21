@@ -5,6 +5,7 @@
 
   **A self-hosted, privacy-first, lightweight Markdown note-taking.**
 
+  [![Release](https://img.shields.io/github/v/release/odevsa/marknote?label=Release&style=flat-square&color=blue&logo=github)](https://github.com/odevsa/marknote/releases/latest)
   ![Rust](https://img.shields.io/badge/Rust-1.80%2B-orange.svg?logo=rust&style=flat-square)
   ![Svelte](https://img.shields.io/badge/Svelte-5-FF3E00.svg?logo=svelte&style=flat-square)
   ![SQLite](https://img.shields.io/badge/SQLite-FTS5-003B57.svg?logo=sqlite&style=flat-square)

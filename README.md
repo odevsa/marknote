@@ -95,7 +95,7 @@ MarkNote is packaged as an official Umbrel OS app and can be installed directly 
 2. Click the **menu icon (three dots ...)** in the top right corner and select **Community App Stores**.
 3. Paste the repository URL:
    ```
-   https://github.com/odevsa/marknote
+   https://github.com/odevsa/umbrel
    ```
 4. Search for **MarkNote** in the App Store and click **Install**.
 

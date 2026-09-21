@@ -1,0 +1,82 @@
+{
+  "auth": {
+    "setupSubtitle": "Crea l'account amministratore per iniziare",
+    "loginSubtitle": "Accedi per visualizzare le tue note",
+    "username": "Nome utente",
+    "password": "Password",
+    "confirmPassword": "Conferma password",
+    "submitSetup": "Completa configurazione",
+    "submitLogin": "Accedi",
+    "logout": "Disconnetti",
+    "setupSuccess": "Configurazione completata con successo!",
+    "invalidCredentials": "Nome utente o password non validi",
+    "passwordMismatch": "Le password non corrispondono",
+    "minPasswordLength": "La password deve contenere almeno 6 caratteri"
+  },
+  "common": {
+    "appTitle": "MarkNote",
+    "search": "Cerca note...",
+    "searchPlaceholder": "Digita per cercare nel testo...",
+    "noResults": "Nessun risultato trovato",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "saved": "Salvato",
+    "saving": "Salvataggio...",
+    "unsaved": "Modifiche non salvate",
+    "delete": "Elimina",
+    "confirmDelete": "Sei sicuro di voler eliminare",
+    "rename": "Rinomina",
+    "create": "Crea",
+    "newNote": "Nuova nota",
+    "newFolder": "Nuova cartella",
+    "namePlaceholder": "Inserisci il nome...",
+    "loading": "Caricamento...",
+    "error": "Si è verificato un errore",
+    "success": "Successo",
+    "close": "Chiudi",
+    "selectNoteToView": "Seleziona una nota dalla barra laterale o creane una nuova per iniziare a modificare.",
+    "allNotes": "Note"
+  },
+  "editor": {
+    "edit": "Modifica",
+    "preview": "Anteprima",
+    "split": "Dividi",
+    "bold": "Grassetto",
+    "italic": "Corsivo",
+    "heading": "Intestazione",
+    "code": "Blocco di codice",
+    "quote": "Citazione",
+    "list": "Elenco puntato",
+    "numList": "Elenco numerato",
+    "link": "Collegamento",
+    "table": "Tabella",
+    "words": "parole",
+    "chars": "caratteri",
+    "emptyNotePlaceholder": "Inizia a digitare la tua nota markdown qui..."
+  },
+  "theme": {
+    "theme": "Tema",
+    "system": "Sistema",
+    "dark": "Scuro",
+    "light": "Chiaro",
+    "paper": "Carta",
+    "vscode": "Code",
+    "matrix": "Matrix"
+  },
+  "lang": {
+    "language": "Lingua",
+    "en": "English",
+    "pt-BR": "Português (BR)",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "theme": "Tema",
+    "language": "Lingua",
+    "fontSize": "Dimensione del carattere del codice",
+    "about": "Informazioni",
+    "version": "Versione"
+  }
+}

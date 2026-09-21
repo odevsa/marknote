@@ -1,0 +1,82 @@
+{
+  "auth": {
+    "setupSubtitle": "Créez le compte administrateur pour commencer",
+    "loginSubtitle": "Connectez-vous pour accéder à vos notes",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "submitSetup": "Terminer la configuration",
+    "submitLogin": "Se connecter",
+    "logout": "Se déconnecter",
+    "setupSuccess": "Configuration terminée avec succès !",
+    "invalidCredentials": "Nom d'utilisateur ou mot de passe invalide",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "minPasswordLength": "Le mot de passe doit comporter au moins 6 caractères"
+  },
+  "common": {
+    "appTitle": "MarkNote",
+    "search": "Rechercher des notes...",
+    "searchPlaceholder": "Tapez pour rechercher dans le texte...",
+    "noResults": "Aucun résultat trouvé",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saved": "Enregistré",
+    "saving": "Enregistrement...",
+    "unsaved": "Modifications non enregistrées",
+    "delete": "Supprimer",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer",
+    "rename": "Renommer",
+    "create": "Créer",
+    "newNote": "Nouvelle note",
+    "newFolder": "Nouveau dossier",
+    "namePlaceholder": "Entrez le nom...",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "success": "Succès",
+    "close": "Fermer",
+    "selectNoteToView": "Sélectionnez une note dans la barre latérale ou créez-en une nouvelle pour commencer.",
+    "allNotes": "Notes"
+  },
+  "editor": {
+    "edit": "Éditer",
+    "preview": "Aperçu",
+    "split": "Diviser",
+    "bold": "Gras",
+    "italic": "Italique",
+    "heading": "Titre",
+    "code": "Bloc de code",
+    "quote": "Citation",
+    "list": "Liste à puces",
+    "numList": "Liste numérotée",
+    "link": "Lien",
+    "table": "Tableau",
+    "words": "mots",
+    "chars": "caractères",
+    "emptyNotePlaceholder": "Commencez à taper votre note en markdown ici..."
+  },
+  "theme": {
+    "theme": "Thème",
+    "system": "Système",
+    "dark": "Sombre",
+    "light": "Clair",
+    "paper": "Papier",
+    "vscode": "Code",
+    "matrix": "Matrix"
+  },
+  "lang": {
+    "language": "Langue",
+    "en": "English",
+    "pt-BR": "Português (BR)",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "theme": "Thème",
+    "language": "Langue",
+    "fontSize": "Taille de la police du code",
+    "about": "À propos",
+    "version": "Version"
+  }
+}

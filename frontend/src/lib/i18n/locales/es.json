@@ -1,0 +1,82 @@
+{
+  "auth": {
+    "setupSubtitle": "Crea la cuenta de administrador para comenzar",
+    "loginSubtitle": "Inicia sesión para acceder a tus notas",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar Contraseña",
+    "submitSetup": "Completar Configuración",
+    "submitLogin": "Iniciar Sesión",
+    "logout": "Cerrar Sesión",
+    "setupSuccess": "¡Configuración completada con éxito!",
+    "invalidCredentials": "Usuario o contraseña inválidos",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "minPasswordLength": "La contraseña debe tener al menos 6 caracteres"
+  },
+  "common": {
+    "appTitle": "MarkNote",
+    "search": "Buscar notas...",
+    "searchPlaceholder": "Escribe para buscar texto completo...",
+    "noResults": "No se encontraron resultados",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "saved": "Guardado",
+    "saving": "Guardando...",
+    "unsaved": "Cambios sin guardar",
+    "delete": "Eliminar",
+    "confirmDelete": "¿Estás seguro de que deseas eliminar",
+    "rename": "Renombrar",
+    "create": "Crear",
+    "newNote": "Nueva Nota",
+    "newFolder": "Nueva Carpeta",
+    "namePlaceholder": "Escribe el nombre...",
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "success": "Éxito",
+    "close": "Cerrar",
+    "selectNoteToView": "Selecciona una nota de la barra lateral o crea una nueva para comenzar a editar.",
+    "allNotes": "Notas"
+  },
+  "editor": {
+    "edit": "Editar",
+    "preview": "Vista previa",
+    "split": "Dividir",
+    "bold": "Negrita",
+    "italic": "Cursiva",
+    "heading": "Encabezado",
+    "code": "Bloque de Código",
+    "quote": "Cita",
+    "list": "Lista con Viñetas",
+    "numList": "Lista Numerada",
+    "link": "Enlace",
+    "table": "Tabla",
+    "words": "palabras",
+    "chars": "caracteres",
+    "emptyNotePlaceholder": "Comienza a escribir tu nota en markdown aquí..."
+  },
+  "theme": {
+    "theme": "Tema",
+    "system": "Sistema",
+    "dark": "Oscuro",
+    "light": "Claro",
+    "paper": "Papel",
+    "vscode": "Code",
+    "matrix": "Matrix"
+  },
+  "lang": {
+    "language": "Idioma",
+    "en": "English",
+    "pt-BR": "Português (BR)",
+    "es": "Español",
+    "fr": "Français",
+    "it": "Italiano"
+  },
+  "settings": {
+    "title": "Configuración",
+    "theme": "Tema",
+    "language": "Idioma",
+    "fontSize": "Tamaño de fuente del código",
+    "about": "Acerca de",
+    "version": "Versión"
+  }
+}

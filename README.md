@@ -15,6 +15,7 @@
   [Features](#features) •
   [Themes](#themes) •
   [Quick Start](#quick-start-with-docker) •
+  [Self-hosted](#self-hosted) •
   [Configuration](#configuration) •
   [Development](#development) •
   [Tech Stack](#tech-stack)
@@ -79,7 +80,104 @@ cd marknote
 docker compose up -d
 ```
 
-Open your browser at `http://localhost:3000`. On your first access, MarkNote will guide you through setting up your administrator credentials.
+Open your browser at `http://localhost:3980`. On your first access, MarkNote will guide you through setting up your administrator credentials.
+
+
+## Self-hosted
+
+MarkNote publishes official multi-architecture Docker images (`linux/amd64`, `linux/arm64`) to Docker Hub at [`odevsa/marknote`](https://hub.docker.com/r/odevsa/marknote).
+
+### Umbrel OS
+
+1. Connect to your Umbrel server via SSH or open the custom app editor.
+2. Create an app directory: `/home/umbrel/umbrel/app-data/marknote`.
+3. Create `docker-compose.yml`:
+
+```yaml
+version: '3.7'
+
+services:
+  app_proxy:
+    environment:
+      APP_HOST: marknote_web_1
+      APP_PORT: 3000
+
+  web:
+    image: odevsa/marknote:latest
+    container_name: marknote_web_1
+    restart: unless-stopped
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DATA_DIR=/app/data/base
+      - NOTES_DIR=/app/data/notes
+      - JWT_SECRET=change_this_to_a_secure_random_secret_32_chars
+    volumes:
+      - ${APP_DATA_DIR}/data/base:/app/data/base
+      - ${APP_DATA_DIR}/data/notes:/app/data/notes
+```
+
+4. Run `umbrelcli app start marknote` or bring up the container using Docker Compose.
+
+### CasaOS
+
+1. Open your **CasaOS Dashboard** and click on **AppStore**.
+2. Click **Custom Install** at the top right.
+3. Fill in the installation fields:
+   - **Docker Image**: `odevsa/marknote:latest`
+   - **Title**: `MarkNote`
+   - **Web UI Port**: `3980` -> `3000` (or any free host port)
+   - **Volume 1**: `/DATA/AppData/marknote/data` -> `/app/data/base`
+   - **Volume 2**: `/DATA/AppData/marknote/notes` -> `/app/data/notes`
+   - **Environment Variable**: `JWT_SECRET` = `your_random_secret_string_32_chars`
+4. Click **Submit** to install and run.
+
+### Docker Compose
+
+1. Create a `docker-compose.yml` file:
+
+```yaml
+services:
+  marknote:
+    image: odevsa/marknote:latest
+    container_name: marknote
+    restart: unless-stopped
+    ports:
+      - "3980:3000"
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - DATA_DIR=/app/data/base
+      - NOTES_DIR=/app/data/notes
+      - JWT_SECRET=change_this_to_a_secure_random_secret_32_chars
+    volumes:
+      - marknote_data:/app/data/base
+      - marknote_notes:/app/data/notes
+
+volumes:
+  marknote_data:
+  marknote_notes:
+```
+
+2. Start the container:
+
+```bash
+docker compose up -d
+```
+
+
+### Docker CLI (Docker Run)
+
+```bash
+docker run -d \
+  --name marknote \
+  -p 3980:3000 \
+  -v $(pwd)/data/base:/app/data/base \
+  -v $(pwd)/data/notes:/app/data/notes \
+  -e JWT_SECRET="change_this_to_a_secure_random_secret_32_chars" \
+  --restart unless-stopped \
+  odevsa/marknote:latest
+```
 
 
 ## Configuration

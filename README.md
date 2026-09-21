@@ -89,35 +89,18 @@ MarkNote publishes official multi-architecture Docker images (`linux/amd64`, `li
 
 ### Umbrel OS
 
-1. Connect to your Umbrel server via SSH or open the custom app editor.
-2. Create an app directory: `/home/umbrel/umbrel/app-data/marknote`.
-3. Create `docker-compose.yml`:
+MarkNote is packaged as an official Umbrel OS app and can be installed directly via **Community App Stores**:
 
-```yaml
-version: '3.7'
+1. Open your **Umbrel Dashboard** and open the **App Store**.
+2. Click the **menu icon (three dots ...)** in the top right corner and select **Community App Stores**.
+3. Paste the repository URL:
+   ```
+   https://github.com/odevsa/marknote
+   ```
+4. Search for **MarkNote** in the App Store and click **Install**.
 
-services:
-  app_proxy:
-    environment:
-      APP_HOST: marknote_web_1
-      APP_PORT: 3000
+---
 
-  web:
-    image: odevsa/marknote:latest
-    container_name: marknote_web_1
-    restart: unless-stopped
-    environment:
-      - PORT=3000
-      - HOST=0.0.0.0
-      - DATA_DIR=/app/data/base
-      - NOTES_DIR=/app/data/notes
-      - JWT_SECRET=change_this_to_a_secure_random_secret_32_chars
-    volumes:
-      - ${APP_DATA_DIR}/data/base:/app/data/base
-      - ${APP_DATA_DIR}/data/notes:/app/data/notes
-```
-
-4. Run `umbrelcli app start marknote` or bring up the container using Docker Compose.
 
 ### CasaOS
 

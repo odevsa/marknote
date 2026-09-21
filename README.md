@@ -151,12 +151,8 @@ services:
       - NOTES_DIR=/app/data/notes
       - JWT_SECRET=change_this_to_a_secure_random_secret_32_chars
     volumes:
-      - marknote_data:/app/data/base
-      - marknote_notes:/app/data/notes
-
-volumes:
-  marknote_data:
-  marknote_notes:
+      - ./.marknote/base:/app/data/base
+      - ./.marknote/notes:/app/data/notes
 ```
 
 2. Start the container:
@@ -172,8 +168,6 @@ docker compose up -d
 docker run -d \
   --name marknote \
   -p 3980:3000 \
-  -v $(pwd)/data/base:/app/data/base \
-  -v $(pwd)/data/notes:/app/data/notes \
   -e JWT_SECRET="change_this_to_a_secure_random_secret_32_chars" \
   --restart unless-stopped \
   odevsa/marknote:latest

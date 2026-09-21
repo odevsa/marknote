@@ -13,6 +13,7 @@
   import { themeStore, setTheme, themes, type Theme } from '$lib/stores/theme';
   import { isSettingsOpen, closeSettings, editorFontSize, setEditorFontSize, fontSizes } from '$lib/stores/ui';
   import { appSettings, updateAppSettings } from '$lib/stores/settings';
+  import { APP_VERSION } from '$lib/version';
   import Logo from '$lib/components/ui/Logo.svelte';
 
   function handleKeydown(e: KeyboardEvent) {
@@ -250,11 +251,14 @@
       <!-- Section: About -->
       <div class="pt-2 border-t border-[var(--border-color)]">
         <div class="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)]">
-          <Logo size={32} />
+          <Logo size={48} />
           <div class="flex-1">
             <h4 class="text-sm font-bold text-[var(--text-primary)]">MarkNote</h4>
             <p class="text-xs text-[var(--text-muted)] mt-0.5">
-              {$t('settings.version')} 1.0.0 • Self-Hosted Notes
+              {$t('settings.version')} {APP_VERSION}
+            </p>
+            <p class="text-xs mt-0.5">
+              <a href="https://github.com/odevsa/marknote" target="_blank" rel="noopener noreferrer">https://github.com/odevsa/marknote</a>
             </p>
           </div>
         </div>

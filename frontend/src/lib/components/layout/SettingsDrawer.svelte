@@ -7,11 +7,12 @@
     Type,
     ChevronDown,
     Save,
-    LayoutGrid
+    LayoutGrid,
+    WrapText
   } from 'lucide-svelte';
   import { t, currentLocale, setLocale, locales, type Locale } from '$lib/i18n';
   import { themeStore, setTheme, themes, type Theme } from '$lib/stores/theme';
-  import { isSettingsOpen, closeSettings, editorFontSize, setEditorFontSize, fontSizes } from '$lib/stores/ui';
+  import { isSettingsOpen, closeSettings, editorFontSize, setEditorFontSize, fontSizes, editorLineWrapping, setEditorLineWrapping } from '$lib/stores/ui';
   import { appSettings, updateAppSettings } from '$lib/stores/settings';
   import { APP_VERSION } from '$lib/version';
   import Logo from '$lib/components/ui/Logo.svelte';
@@ -34,7 +35,7 @@
   ></div>
 
   <!-- Right Drawer -->
-  <aside
+  <div
     class="fixed inset-y-0 right-0 z-50 w-80 sm:w-96 border-l border-[var(--border-color)] bg-[var(--card-bg)] shadow-2xl flex flex-col animate-in slide-in-from-right duration-200 select-none overflow-hidden"
     role="dialog"
     aria-modal="true"
@@ -136,6 +137,26 @@
             <ChevronDown size={16} />
           </div>
         </div>
+      </div>
+
+      <!-- Section: Line Wrapping (Toggle) -->
+      <div class="flex items-center justify-between pt-4 border-t border-[var(--border-color)]">
+        <label for="line-wrapping-toggle" class="flex flex-col gap-0.5 cursor-pointer">
+          <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+            <WrapText size={16} class="text-[var(--accent)]" />
+            <span>{$t('settings.lineWrapping')}</span>
+          </span>
+          <span class="text-[11px] text-[var(--text-muted)]">
+            {$t('settings.lineWrappingHelp')}
+          </span>
+        </label>
+        <input
+          id="line-wrapping-toggle"
+          type="checkbox"
+          checked={$editorLineWrapping}
+          onchange={(e) => setEditorLineWrapping(e.currentTarget.checked)}
+          class="w-5 h-5 rounded border-[var(--border-color)] text-[var(--accent)] focus:ring-[var(--accent)] cursor-pointer"
+        />
       </div>
 
       <!-- Section: Auto Save & Draft Settings -->
@@ -264,5 +285,5 @@
         </div>
       </div>
     </div>
-  </aside>
+  </div>
 {/if}

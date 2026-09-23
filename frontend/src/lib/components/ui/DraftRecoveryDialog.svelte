@@ -29,7 +29,7 @@
       <button
         type="button"
         onclick={restoreLocalDraft}
-        class="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white transition cursor-pointer shadow-xs"
+        class="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] transition cursor-pointer shadow-xs"
       >
         {$t('settings.restoreDraft')}
       </button>

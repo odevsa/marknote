@@ -14,33 +14,42 @@
       createItem,
       deleteItem,
       fileTree,
+      isLoadingNote,
       loadTree,
       openNote,
       parseCurrentRoute
   } from '$lib/stores/notes';
   import { appSettings, loadAppSettings } from '$lib/stores/settings';
   import { renderMarkdown } from '$lib/utils/markdown';
-  import { Clock, Edit3, FileText, Plus, Trash2 } from 'lucide-svelte';
+  import { Clock, Edit3, FileText, LoaderCircle, Plus, Trash2 } from 'lucide-svelte';
 
   let isQuickCreateOpen = $state(false);
   let isDeleteOpen = $state(false);
   let noteToDeletePath = $state('');
 
   let recentNotes = $state<RecentNote[]>([]);
-  let isLoadingRecent = $state(false);
+  let isLoadingRecent = $state(true);
+  let isInitialLoading = $state(true);
   let hasInitialLoaded = false;
 
   $effect(() => {
     if ($authStore.user && !hasInitialLoaded) {
       hasInitialLoaded = true;
-      loadTree();
-      loadAppSettings();
-
-      // Deep linking / Bookmark support: check if /file/... or ?path=... exists in URL
       const route = parseCurrentRoute();
       if (route.path) {
+        isLoadingNote.set(true);
         openNote(route.path, route.mode);
       }
+
+      Promise.all([loadTree(), loadAppSettings()]).then(async () => {
+        if ($appSettings.show_recent_notes && !route.path) {
+          await fetchRecentNotes();
+        }
+        isInitialLoading = false;
+      }).catch((err) => {
+        console.error('Initial load error:', err);
+        isInitialLoading = false;
+      });
     }
   });
 
@@ -54,7 +63,10 @@
   }
 
   async function fetchRecentNotes() {
-    if (!$appSettings.show_recent_notes) return;
+    if (!$appSettings.show_recent_notes) {
+      isLoadingRecent = false;
+      return;
+    }
     isLoadingRecent = true;
     try {
       recentNotes = await api.getRecentNotes($appSettings.recent_notes_count);
@@ -129,78 +141,80 @@
     <main class="flex-1 flex flex-col overflow-hidden bg-[var(--bg-primary)]">
       {#if $activeNote}
         <MarkdownEditor />
-      {:else if $appSettings.show_recent_notes && $fileTree.length > 0 && recentNotes.length > 0}
+      {:else if $isLoadingNote || isInitialLoading || isLoadingRecent}
+        <div class="flex-1 flex flex-col items-center justify-center p-6 text-center select-none bg-[var(--bg-primary)]">
+          <div class="animate-spin text-[var(--accent)] mb-3">
+            <LoaderCircle size={32} />
+          </div>
+          <p class="text-xs text-[var(--text-muted)] font-medium">{$t('common.loading')}</p>
+        </div>
+      {:else if $appSettings.show_recent_notes && recentNotes.length > 0}
         <!-- Recent Notes Grid View -->
-        <div class="flex-1 overflow-y-auto p-6 sm:p-8 max-w-6xl mx-auto w-full">
-          <div class="flex items-center justify-between mb-6 pb-3 border-b border-[var(--border-color)]">
-            <div class="flex items-center gap-2.5">
-              <Clock size={20} class="text-[var(--accent)]" />
-              <h2 class="text-base sm:text-lg font-bold text-[var(--text-primary)]">
+        <div class="flex-1 overflow-y-auto p-4 sm:p-8 max-w-6xl mx-auto w-full">
+          <div class="flex items-center justify-between mb-5 pb-3 border-b border-[var(--border-color)]">
+            <div class="flex items-center gap-2 sm:gap-2.5">
+              <Clock size={22} class="text-[var(--accent)] shrink-0 sm:size-[20px]" />
+              <h2 class="text-lg sm:text-base font-bold text-[var(--text-primary)]">
                 {$t('common.recentNotes')}
               </h2>
             </div>
             <button
               onclick={() => (isQuickCreateOpen = true)}
-              class="px-3.5 py-1.5 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs transition cursor-pointer"
+              class="px-1.5 py-1.5 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] text-sm sm:text-xs font-semibold flex items-center gap-1.5 shadow-xs transition cursor-pointer shrink-0"
             >
-              <Plus size={16} />
-              <span>{$t('common.newNote')}</span>
+              <Plus size={18} class="sm:size-[16px]" />
             </button>
           </div>
 
-          {#if isLoadingRecent}
-            <div class="py-12 text-center text-sm text-[var(--text-muted)]">
-              {$t('common.loading')}
-            </div>
-          {:else}
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {#each recentNotes as note (note.path)}
-                <div
-                  onclick={() => handleCardClick(note.path)}
-                  class="group relative rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-[var(--accent)] hover:shadow-lg transition-all duration-200 flex flex-col max-h-256 lg:h-64 overflow-hidden cursor-pointer"
-                  role="button"
-                  tabindex="0"
-                  onkeydown={(e) => e.key === 'Enter' && handleCardClick(note.path)}
-                >
-                  <!-- Card Header -->
-                  <div class="px-4 py-3 border-b border-[var(--border-color)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50">
-                    <div class="flex items-center gap-2 min-w-0 flex-1 pr-2">
-                      <FileText size={16} class="text-[var(--accent)] shrink-0" />
-                      <span class="font-semibold text-xs sm:text-sm text-[var(--text-primary)] truncate" title={note.title}>
-                        {note.title}
-                      </span>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="flex items-center gap-1 shrink-0 opacity-80 group-hover:opacity-100 transition">
-                      <button
-                        onclick={(e) => handleCardEdit(note.path, e)}
-                        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer"
-                        title={$t('common.edit')}
-                      >
-                        <Edit3 size={14} />
-                      </button>
-                      <button
-                        onclick={(e) => promptDeleteNote(note.path, e)}
-                        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer"
-                        title={$t('common.delete')}
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+            {#each recentNotes as note (note.path)}
+              <div
+                onclick={() => handleCardClick(note.path)}
+                class="group relative rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-[var(--accent)] hover:shadow-lg transition-all duration-200 flex flex-col max-h-256 lg:h-64 overflow-hidden cursor-pointer"
+                role="button"
+                tabindex="0"
+                onkeydown={(e) => e.key === 'Enter' && handleCardClick(note.path)}
+              >
+                <!-- Card Header -->
+                <div class="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-[var(--border-color)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50">
+                  <div class="flex items-center gap-2 min-w-0 flex-1 pr-2">
+                    <FileText size={18} class="text-[var(--accent)] shrink-0 sm:size-[16px]" />
+                    <span class="font-bold sm:font-semibold text-base sm:text-sm text-[var(--text-primary)] truncate" title={note.title}>
+                      {note.title}
+                    </span>
                   </div>
 
-                  <!-- Card Body / Markdown Preview -->
-                  <div class="p-4 flex-1 overflow-hidden relative">
-                    <div class="markdown-body card-markdown-preview opacity-90">
-                      {@html renderPreview(note.content)}
-                    </div>
-                    <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--card-bg)] to-transparent pointer-events-none"></div>
+                  <!-- Actions -->
+                  <div class="flex items-center gap-0.5 sm:gap-1 shrink-0 opacity-100 sm:opacity-80 sm:group-hover:opacity-100 transition">
+                    <button
+                      onclick={(e) => handleCardEdit(note.path, e)}
+                      class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--accent)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer"
+                      title={$t('common.edit')}
+                      aria-label={$t('common.edit')}
+                    >
+                      <Edit3 size={18} class="sm:size-[14px]" />
+                    </button>
+                    <button
+                      onclick={(e) => promptDeleteNote(note.path, e)}
+                      class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer"
+                      title={$t('common.delete')}
+                      aria-label={$t('common.delete')}
+                    >
+                      <Trash2 size={18} class="sm:size-[14px]" />
+                    </button>
                   </div>
                 </div>
-              {/each}
-            </div>
-          {/if}
+
+                <!-- Card Body / Markdown Preview -->
+                <div class="p-4 flex-1 overflow-hidden relative">
+                  <div class="markdown-body card-markdown-preview opacity-90">
+                    {@html renderPreview(note.content)}
+                  </div>
+                  <div class="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-[var(--card-bg)] to-transparent pointer-events-none"></div>
+                </div>
+              </div>
+            {/each}
+          </div>
         </div>
       {:else}
         <!-- Empty workspace placeholder when 0 notes exist or show_recent_notes is disabled -->
@@ -214,7 +228,7 @@
           </p>
           <button
             onclick={() => (isQuickCreateOpen = true)}
-            class="px-4 py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs transition cursor-pointer"
+            class="px-4 py-2 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] text-xs sm:text-sm font-medium flex items-center gap-2 shadow-xs transition cursor-pointer"
           >
             <Plus size={16} />
             <span>{$t('common.newNote')}</span>

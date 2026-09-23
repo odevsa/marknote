@@ -1,29 +1,37 @@
 <script lang="ts">
   import { t as i18n } from '$lib/i18n';
-  import { activeNote, clearLocalDraft, closeNote, getRouteUrl, saveCurrentNote, saveLocalDraft } from '$lib/stores/notes';
+  import { activeNote, clearLocalDraft, closeNote, getRouteUrl, isDirty, saveCurrentNote, saveLocalDraft } from '$lib/stores/notes';
   import { appSettings } from '$lib/stores/settings';
-  import { editorViewMode, type ViewMode } from '$lib/stores/ui';
+  import { editorLineWrapping, editorViewMode, type ViewMode } from '$lib/stores/ui';
   import { renderMarkdown } from '$lib/utils/markdown';
-  import { defaultKeymap, history, historyKeymap, indentWithTab } from '@codemirror/commands';
+  import { defaultKeymap, history, historyKeymap, indentWithTab, redo, undo } from '@codemirror/commands';
   import { markdown } from '@codemirror/lang-markdown';
   import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
-  import { EditorState } from '@codemirror/state';
-  import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+  import { Compartment, EditorState } from '@codemirror/state';
+  import { EditorView, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
   import { tags as t } from '@lezer/highlight';
   import {
       Bold,
+      ChevronDown,
       Code,
+      CodeXml,
       Columns,
       Edit3,
       Eye,
       Heading,
+      Image,
       Italic,
       Link,
       List,
       ListOrdered,
+      ListTodo,
+      Minus,
       Quote,
+      Redo2,
       Save,
+      Strikethrough,
       Table,
+      Undo2,
       X
   } from 'lucide-svelte';
   import { onDestroy, onMount } from 'svelte';
@@ -38,9 +46,9 @@
 
   // Define markdown syntax highlighting style using active theme variables
   const markdownHighlightStyle = HighlightStyle.define([
-    { tag: t.heading1, fontSize: '1.35em', fontWeight: 'bold', color: 'var(--code-title)' },
-    { tag: t.heading2, fontSize: '1.2em', fontWeight: 'bold', color: 'var(--code-title)' },
-    { tag: t.heading3, fontSize: '1.1em', fontWeight: 'bold', color: 'var(--code-title)' },
+    { tag: t.heading1, fontWeight: 'bold', color: 'var(--code-title)' },
+    { tag: t.heading2, fontWeight: 'bold', color: 'var(--code-title)' },
+    { tag: t.heading3, fontWeight: 'bold', color: 'var(--code-title)' },
     { tag: t.heading, fontWeight: 'bold', color: 'var(--code-title)' },
     { tag: t.strong, fontWeight: 'bold', color: 'var(--code-keyword)' },
     { tag: t.emphasis, fontStyle: 'italic' },
@@ -57,48 +65,68 @@
     { tag: t.monospace, color: 'var(--accent)' }
   ]);
 
+  const lineWrappingCompartment = new Compartment();
+
   const editorTheme = EditorView.theme({
     '&': {
       height: '100%',
       backgroundColor: 'var(--editor-bg)',
       color: 'var(--text-primary)',
-      fontSize: 'var(--code-font-size, 14px)'
+      fontSize: 'var(--code-font-size, 14px)',
+      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+      lineHeight: 'inherit'
     },
     '.cm-scroller': {
       overflow: 'auto',
-      fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-      lineHeight: '1.65',
-      scrollBehavior: 'auto !important'
+      fontFamily: 'inherit',
+      lineHeight: 'inherit'
+    },
+    '.cm-scroller::-webkit-scrollbar-corner': {
+      backgroundColor: 'transparent'
     },
     '.cm-content': {
-      padding: '16px 20px',
+      paddingTop: '8px',
+      paddingBottom: '8px',
       caretColor: 'var(--accent)'
     },
     '.cm-line': {
-      padding: '0'
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      lineHeight: 'inherit'
     },
     '&.cm-focused .cm-cursor': {
       borderLeftColor: 'var(--accent)',
       borderLeftWidth: '2px'
     },
     '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, ::selection': {
-      backgroundColor: 'var(--accent)',
-      opacity: '0.2'
+      backgroundColor: 'var(--selection-bg, rgba(59, 130, 246, 0.35)) !important'
     },
     '.cm-gutters': {
       backgroundColor: 'var(--editor-bg)',
       color: 'var(--text-muted)',
       borderRight: '1px solid var(--border-color)',
-      fontSize: '0.85em',
+      position: 'sticky',
+      left: 0,
+      zIndex: 3,
+      fontFamily: 'inherit',
+      fontSize: '1em',
+      lineHeight: 'inherit',
       userSelect: 'none'
     },
+    '.cm-gutterElement': {
+      color: 'var(--text-muted)',
+      opacity: 0.5,
+      lineHeight: 'inherit',
+      fontFamily: 'inherit'
+    },
     '.cm-activeLineGutter': {
-      backgroundColor: 'var(--bg-secondary)',
-      color: 'var(--text-primary)'
+      backgroundColor: 'var(--active-line-bg, rgba(255, 255, 255, 0.05)) !important',
+      color: 'var(--accent) !important',
+      opacity: '1 !important',
+      fontWeight: 'bold'
     },
     '.cm-activeLine': {
-      backgroundColor: 'var(--bg-secondary)',
-      opacity: '0.4'
+      backgroundColor: 'var(--active-line-bg, rgba(255, 255, 255, 0.05)) !important'
     }
   });
 
@@ -202,9 +230,14 @@
           changes: { from: 0, to: currentDoc.length, insert: targetContent }
         });
       }
-    } else if (currentDoc !== targetContent && !editorView.hasFocus) {
+    }
+  });
+
+  $effect(() => {
+    const enabled = $editorLineWrapping;
+    if (editorView) {
       editorView.dispatch({
-        changes: { from: 0, to: currentDoc.length, insert: targetContent }
+        effects: lineWrappingCompartment.reconfigure(enabled ? EditorView.lineWrapping : [])
       });
     }
   });
@@ -217,8 +250,10 @@
         doc: $activeNote?.content || '',
         extensions: [
           lineNumbers(),
+          highlightActiveLineGutter(),
+          highlightActiveLine(),
           history(),
-          EditorView.lineWrapping,
+          lineWrappingCompartment.of($editorLineWrapping ? EditorView.lineWrapping : []),
           markdown(),
           syntaxHighlighting(markdownHighlightStyle),
           editorTheme,
@@ -264,6 +299,30 @@
     }
   });
 
+  let showHeadingDropdown = $state(false);
+  let headingDropdownStyle = $state('');
+
+  function toggleHeadingDropdown(e: MouseEvent) {
+    const btn = e.currentTarget as HTMLElement;
+    const rect = btn.getBoundingClientRect();
+    headingDropdownStyle = `top: ${rect.bottom + 6}px; left: ${Math.max(8, rect.left)}px;`;
+    showHeadingDropdown = !showHeadingDropdown;
+  }
+
+  function applyUndo() {
+    if (editorView) {
+      undo(editorView);
+      editorView.focus();
+    }
+  }
+
+  function applyRedo() {
+    if (editorView) {
+      redo(editorView);
+      editorView.focus();
+    }
+  }
+
   function insertFormatting(prefix: string, suffix = '') {
     if (!editorView) return;
     const state = editorView.state;
@@ -287,6 +346,14 @@
     insertFormatting(tableTemplate, '');
   }
 
+  function handleToolbarWheel(e: WheelEvent) {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      const container = e.currentTarget as HTMLElement;
+      container.scrollLeft += e.deltaY;
+    }
+  }
+
   let renderedHtml = $derived.by(() => {
     if (!$activeNote?.content) return '';
     return renderMarkdown($activeNote.content);
@@ -294,93 +361,228 @@
 </script>
 
 <div class="flex-1 flex flex-col h-full overflow-hidden bg-[var(--editor-bg)]">
-  <!-- Toolbar -->
-  <div class="h-11 border-b border-[var(--border-color)] px-4 flex items-center justify-between gap-2 select-none shrink-0 overflow-x-auto">
-    <!-- Format tools -->
-    <div class="flex items-center gap-0.5 sm:gap-1">
-      <button
-        onclick={() => insertFormatting('**', '**')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.bold')}
+  <!-- Toolbar Container -->
+  <div class="h-11 border-b border-[var(--border-color)] px-2 sm:px-4 flex items-center justify-between gap-1 select-none shrink-0 w-full overflow-hidden bg-[var(--editor-bg)]">
+    <!-- Format tools container with scroll fade indicator -->
+    <div class="relative flex-1 flex items-center min-w-0 {$editorViewMode === 'preview' ? 'hidden' : ''}">
+      <!-- Scrollable format tools list -->
+      <div
+        onwheel={handleToolbarWheel}
+        class="flex-1 flex items-center gap-0.5 sm:gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden py-1 min-w-0 pr-6"
       >
-        <Bold size={16} />
-      </button>
+        <!-- Undo / Redo -->
+        <button
+          onclick={applyUndo}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.undo')}
+          aria-label={$i18n('editor.undo')}
+        >
+          <Undo2 size={20} class="sm:size-[16px]" />
+        </button>
 
-      <button
-        onclick={() => insertFormatting('*', '*')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.italic')}
-      >
-        <Italic size={16} />
-      </button>
+        <button
+          onclick={applyRedo}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.redo')}
+          aria-label={$i18n('editor.redo')}
+        >
+          <Redo2 size={20} class="sm:size-[16px]" />
+        </button>
 
-      <button
-        onclick={() => insertFormatting('### ')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.heading')}
-      >
-        <Heading size={16} />
-      </button>
+        <div class="h-4 w-px bg-[var(--border-color)] mx-0.5 sm:mx-1 shrink-0"></div>
 
-      <div class="h-4 w-px bg-[var(--border-color)] mx-1"></div>
+        <!-- Headings Dropdown Selector -->
+        <div class="shrink-0">
+          <button
+            onclick={toggleHeadingDropdown}
+            class="p-1.5 px-2 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer flex items-center gap-0.5 text-xs font-semibold"
+            title={$i18n('editor.heading')}
+            aria-label={$i18n('editor.heading')}
+          >
+            <Heading size={20} class="sm:size-[16px]" />
+            <ChevronDown size={14} class="sm:size-[12px]" />
+          </button>
 
-      <button
-        onclick={() => insertFormatting('```\n', '\n```')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.code')}
-      >
-        <Code size={16} />
-      </button>
+          {#if showHeadingDropdown}
+            <div
+              class="fixed inset-0 z-40"
+              onclick={() => (showHeadingDropdown = false)}
+              role="presentation"
+            ></div>
+            <div
+              style={headingDropdownStyle}
+              class="fixed z-50 min-w-[140px] bg-[var(--card-bg)] border border-[var(--border-color)] rounded-lg shadow-xl py-1 text-xs"
+            >
+              <button
+                onclick={() => { insertFormatting('# '); showHeadingDropdown = false; }}
+                class="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] font-bold text-base flex items-center justify-between cursor-pointer"
+              >
+                <span>H1</span> <span class="text-xs text-[var(--text-muted)] font-normal"># Título 1</span>
+              </button>
+              <button
+                onclick={() => { insertFormatting('## '); showHeadingDropdown = false; }}
+                class="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] font-bold text-sm flex items-center justify-between cursor-pointer"
+              >
+                <span>H2</span> <span class="text-xs text-[var(--text-muted)] font-normal">## Título 2</span>
+              </button>
+              <button
+                onclick={() => { insertFormatting('### '); showHeadingDropdown = false; }}
+                class="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] font-bold text-xs flex items-center justify-between cursor-pointer"
+              >
+                <span>H3</span> <span class="text-xs text-[var(--text-muted)] font-normal">### Título 3</span>
+              </button>
+              <button
+                onclick={() => { insertFormatting('#### '); showHeadingDropdown = false; }}
+                class="w-full text-left px-3 py-1.5 hover:bg-[var(--bg-tertiary)] text-[var(--text-primary)] font-semibold text-xs flex items-center justify-between cursor-pointer"
+              >
+                <span>H4</span> <span class="text-xs text-[var(--text-muted)] font-normal">#### Título 4</span>
+              </button>
+            </div>
+          {/if}
+        </div>
 
-      <button
-        onclick={() => insertFormatting('> ')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.quote')}
-      >
-        <Quote size={16} />
-      </button>
+        <div class="h-4 w-px bg-[var(--border-color)] mx-0.5 sm:mx-1 shrink-0"></div>
 
-      <button
-        onclick={() => insertFormatting('- ')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.list')}
-      >
-        <List size={16} />
-      </button>
+        <!-- Text formatting: Bold, Italic, Strikethrough -->
+        <button
+          onclick={() => insertFormatting('**', '**')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.bold')}
+          aria-label={$i18n('editor.bold')}
+        >
+          <Bold size={20} class="sm:size-[16px]" />
+        </button>
 
-      <button
-        onclick={() => insertFormatting('1. ')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.numList')}
-      >
-        <ListOrdered size={16} />
-      </button>
+        <button
+          onclick={() => insertFormatting('*', '*')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.italic')}
+          aria-label={$i18n('editor.italic')}
+        >
+          <Italic size={20} class="sm:size-[16px]" />
+        </button>
 
-      <button
-        onclick={() => insertFormatting('[', '](https://)')}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.link')}
-      >
-        <Link size={16} />
-      </button>
+        <button
+          onclick={() => insertFormatting('~~', '~~')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.strikethrough')}
+          aria-label={$i18n('editor.strikethrough')}
+        >
+          <Strikethrough size={20} class="sm:size-[16px]" />
+        </button>
 
-      <button
-        onclick={insertTable}
-        class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer"
-        title={$i18n('editor.table')}
-      >
-        <Table size={16} />
-      </button>
+        <div class="h-4 w-px bg-[var(--border-color)] mx-0.5 sm:mx-1 shrink-0"></div>
+
+        <!-- Lists: Bullet list, Numbered list, Checkbox list -->
+        <button
+          onclick={() => insertFormatting('- ')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.list')}
+          aria-label={$i18n('editor.list')}
+        >
+          <List size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('1. ')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.numList')}
+          aria-label={$i18n('editor.numList')}
+        >
+          <ListOrdered size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('- [ ] ')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.todoList')}
+          aria-label={$i18n('editor.todoList')}
+        >
+          <ListTodo size={20} class="sm:size-[16px]" />
+        </button>
+
+        <div class="h-4 w-px bg-[var(--border-color)] mx-0.5 sm:mx-1 shrink-0"></div>
+
+        <!-- Inserts: Link, Image, Quote, Inline code, Code block, Table, HR -->
+        <button
+          onclick={() => insertFormatting('[', '](https://)')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.link')}
+          aria-label={$i18n('editor.link')}
+        >
+          <Link size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('![alt](', ')')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.image')}
+          aria-label={$i18n('editor.image')}
+        >
+          <Image size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('> ')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.quote')}
+          aria-label={$i18n('editor.quote')}
+        >
+          <Quote size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('`', '`')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.code')}
+          aria-label={$i18n('editor.code')}
+        >
+          <Code size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('```\n', '\n```')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.codeBlock')}
+          aria-label={$i18n('editor.codeBlock')}
+        >
+          <CodeXml size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={insertTable}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.table')}
+          aria-label={$i18n('editor.table')}
+        >
+          <Table size={20} class="sm:size-[16px]" />
+        </button>
+
+        <button
+          onclick={() => insertFormatting('\n---\n', '')}
+          class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition cursor-pointer shrink-0"
+          title={$i18n('editor.hr')}
+          aria-label={$i18n('editor.hr')}
+        >
+          <Minus size={20} class="sm:size-[16px]" />
+        </button>
+      </div>
+
+      <!-- Right fadeout transparency overlay indicating horizontal scrollable content -->
+      <div class="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-r from-transparent via-[var(--editor-bg)]/80 to-[var(--editor-bg)] z-10"></div>
     </div>
 
-    <!-- View mode switcher & Save button -->
-    <div class="flex items-center gap-1.5">
+    <!-- Action Buttons (Fixed on the right, larger touch targets on mobile) -->
+    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-auto bg-[var(--editor-bg)] pl-1 z-10">
+      <!-- Save Button -->
       <button
         onclick={() => saveCurrentNote()}
-        class="h-7 px-2.5 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer shrink-0"
+        disabled={!$isDirty}
+        class="h-9 w-9 sm:h-7 sm:w-auto sm:px-2.5 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] text-xs font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0 shadow-xs"
         title="Ctrl+S"
+        aria-label={$i18n('common.save')}
       >
-        <Save size={14} />
+        <Save size={20} class="sm:size-[14px]" />
         <span class="hidden sm:inline">{$i18n('common.save')}</span>
       </button>
 
@@ -390,6 +592,7 @@
           onclick={() => changeViewMode('edit')}
           class="h-full px-2 rounded-md text-xs transition flex items-center justify-center cursor-pointer {$editorViewMode === 'edit' ? 'bg-[var(--card-bg)] text-[var(--text-primary)] shadow-xs font-medium' : 'text-[var(--text-muted)]'}"
           title={$i18n('editor.edit')}
+          aria-label={$i18n('editor.edit')}
         >
           <Edit3 size={14} />
         </button>
@@ -398,6 +601,7 @@
           onclick={() => changeViewMode('split')}
           class="h-full px-2 rounded-md text-xs transition flex items-center justify-center cursor-pointer {$editorViewMode === 'split' ? 'bg-[var(--card-bg)] text-[var(--text-primary)] shadow-xs font-medium' : 'text-[var(--text-muted)]'}"
           title={$i18n('editor.split')}
+          aria-label={$i18n('editor.split')}
         >
           <Columns size={14} />
         </button>
@@ -406,6 +610,7 @@
           onclick={() => changeViewMode('preview')}
           class="h-full px-2 rounded-md text-xs transition flex items-center justify-center cursor-pointer {$editorViewMode === 'preview' ? 'bg-[var(--card-bg)] text-[var(--text-primary)] shadow-xs font-medium' : 'text-[var(--text-muted)]'}"
           title={$i18n('editor.preview')}
+          aria-label={$i18n('editor.preview')}
         >
           <Eye size={14} />
         </button>
@@ -416,18 +621,20 @@
         {#if $editorViewMode === 'preview'}
           <button
             onclick={() => changeViewMode('edit')}
-            class="h-7 w-7 rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition cursor-pointer"
+            class="h-9 w-9 rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition cursor-pointer shrink-0 shadow-xs"
             title={$i18n('editor.edit')}
+            aria-label={$i18n('editor.edit')}
           >
-            <Edit3 size={14} />
+            <Edit3 size={20} />
           </button>
         {:else}
           <button
             onclick={() => changeViewMode('preview')}
-            class="h-7 w-7 rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition cursor-pointer"
+            class="h-9 w-9 rounded-lg border border-[var(--border-color)] bg-[var(--bg-secondary)] text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] flex items-center justify-center transition cursor-pointer shrink-0 shadow-xs"
             title={$i18n('editor.preview')}
+            aria-label={$i18n('editor.preview')}
           >
-            <Eye size={14} />
+            <Eye size={20} />
           </button>
         {/if}
       </div>
@@ -435,24 +642,24 @@
       <!-- Close Note Button -->
       <button
         onclick={() => closeNote()}
-        class="h-7 w-7 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer ml-0.5"
+        class="h-9 w-9 sm:h-7 sm:w-7 flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer shrink-0 ml-0.5"
         title={$i18n('common.close')}
         aria-label={$i18n('common.close')}
       >
-        <X size={15} />
+        <X size={20} class="sm:size-[18px]" />
       </button>
     </div>
   </div>
 
   <!-- Content Workspace -->
-  <div class="flex-1 flex overflow-hidden">
+  <div class="flex-1 flex min-w-0 min-h-0 overflow-hidden">
     <!-- CodeMirror Editor with Markdown Syntax Highlighting -->
     <div
-      class="flex-1 h-full flex flex-col relative {$editorViewMode === 'preview' ? 'hidden' : ''} {$editorViewMode === 'split' ? 'border-r border-[var(--border-color)]' : ''}"
+      class="flex-1 h-full min-w-0 min-h-0 flex flex-col relative {$editorViewMode === 'preview' ? 'hidden' : ''} {$editorViewMode === 'split' ? 'border-r border-[var(--border-color)]' : ''}"
     >
       <div
         bind:this={editorContainerRef}
-        class="w-full h-full overflow-hidden"
+        class="w-full h-full min-w-0 min-h-0 overflow-hidden"
       ></div>
     </div>
 
@@ -463,6 +670,8 @@
       onmouseenter={setPreviewActive}
       ontouchstart={setPreviewActive}
       onwheel={setPreviewActive}
+      role="region"
+      aria-label="Markdown preview"
       style="scroll-behavior: auto !important;"
       class="flex-1 h-full p-4 sm:p-8 overflow-y-auto bg-[var(--bg-primary)] {$editorViewMode === 'edit' ? 'hidden' : ''}"
     >

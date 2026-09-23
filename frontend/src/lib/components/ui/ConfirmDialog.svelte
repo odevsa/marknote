@@ -44,7 +44,7 @@
       <button
         type="button"
         onclick={handleConfirm}
-        class="px-4 py-2 text-sm rounded-lg text-white transition {danger ? 'bg-[var(--danger)] hover:opacity-90' : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)]'}"
+        class="px-4 py-2 text-sm rounded-lg transition {danger ? 'bg-[var(--danger)] text-white hover:opacity-90' : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)]'}"
       >
         {confirmText || $t('common.delete')}
       </button>

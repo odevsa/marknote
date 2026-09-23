@@ -5,6 +5,8 @@ export const isSettingsOpen = writable<boolean>(false);
 export type ViewMode = "split" | "edit" | "preview";
 export const editorViewMode = writable<ViewMode>("split");
 
+export const activeTreeMenuPath = writable<string | null>(null);
+
 export function openSettings() {
   isSettingsOpen.set(true);
 }
@@ -50,5 +52,22 @@ export function setEditorFontSize(size: string) {
   if (typeof window !== "undefined") {
     localStorage.setItem("marknote_code_font_size", size);
     document.documentElement.style.setProperty("--code-font-size", size);
+  }
+}
+
+export const editorLineWrapping = writable<boolean>(false);
+
+export function initEditorLineWrapping() {
+  if (typeof window !== "undefined") {
+    const saved = localStorage.getItem("marknote_line_wrapping");
+    const enabled = saved === null ? true : saved === "true";
+    editorLineWrapping.set(enabled);
+  }
+}
+
+export function setEditorLineWrapping(enabled: boolean) {
+  editorLineWrapping.set(enabled);
+  if (typeof window !== "undefined") {
+    localStorage.setItem("marknote_line_wrapping", String(enabled));
   }
 }

@@ -42,27 +42,29 @@
     <div class="flex items-center gap-1">
       <button
         onclick={handleCreateFile}
-        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] transition"
+        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] transition cursor-pointer"
         title={$t('common.newNote')}
+        aria-label={$t('common.newNote')}
       >
-        <FilePlus size={16} />
+        <FilePlus size={20} class="sm:size-[16px]" />
       </button>
 
       <button
         onclick={handleCreateFolder}
-        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] transition"
+        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] transition cursor-pointer"
         title={$t('common.newFolder')}
+        aria-label={$t('common.newFolder')}
       >
-        <FolderPlus size={16} />
+        <FolderPlus size={20} class="sm:size-[16px]" />
       </button>
 
       <!-- Mobile close button -->
       <button
         onclick={closeSidebar}
-        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] md:hidden transition ml-1"
+        class="p-1.5 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] md:hidden transition ml-1 cursor-pointer"
         aria-label="Close sidebar"
       >
-        <X size={16} />
+        <X size={20} class="sm:size-[16px]" />
       </button>
     </div>
   </div>

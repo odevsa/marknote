@@ -9,6 +9,7 @@ export interface ActiveNote {
 
 export const fileTree = writable<FileTreeNode[]>([]);
 export const activeNote = writable<ActiveNote | null>(null);
+export const isLoadingNote = writable<boolean>(false);
 export const isSaving = writable<boolean>(false);
 export const lastSavedAt = writable<Date | null>(null);
 export const searchQuery = writable<string>("");
@@ -140,6 +141,7 @@ export async function openNote(path: string, mode?: ViewMode, force = false): Pr
     return;
   }
 
+  isLoadingNote.set(true);
   try {
     const res = await api.getNote(path);
     activeNote.set({
@@ -148,7 +150,11 @@ export async function openNote(path: string, mode?: ViewMode, force = false): Pr
       initialContent: res.content,
     });
 
-    const targetMode = mode || get(editorViewMode) || "preview";
+    let targetMode = mode;
+    if (!targetMode) {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      targetMode = isMobile ? 'preview' : (get(editorViewMode) || 'split');
+    }
     editorViewMode.set(targetMode);
 
     // On mobile, close sidebar when a note is opened
@@ -182,6 +188,8 @@ export async function openNote(path: string, mode?: ViewMode, force = false): Pr
     }
   } catch (err) {
     console.error(`Failed to open note ${path}:`, err);
+  } finally {
+    isLoadingNote.set(false);
   }
 }
 

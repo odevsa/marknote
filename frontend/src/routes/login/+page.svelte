@@ -68,7 +68,7 @@
       <button
         type="submit"
         disabled={$authStore.loading}
-        class="w-full mt-2 py-2.5 px-4 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-white text-sm font-semibold flex items-center justify-center gap-2 transition disabled:opacity-50 cursor-pointer"
+        class="w-full mt-2 py-2.5 px-4 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)] text-sm font-semibold flex items-center justify-center gap-2 transition disabled:opacity-50 cursor-pointer"
       >
         {#if $authStore.loading}
           <Loader2 size={16} class="animate-spin" />

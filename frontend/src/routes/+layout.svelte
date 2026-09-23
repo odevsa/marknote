@@ -15,7 +15,7 @@
   import SettingsDrawer from '$lib/components/layout/SettingsDrawer.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
   import DraftRecoveryDialog from '$lib/components/ui/DraftRecoveryDialog.svelte';
-  import { initEditorFontSize } from '$lib/stores/ui';
+  import { initEditorFontSize, initEditorLineWrapping } from '$lib/stores/ui';
   import { t } from '$lib/i18n';
 
   let { children } = $props();
@@ -23,6 +23,7 @@
   onMount(() => {
     initThemeListener();
     initEditorFontSize();
+    initEditorLineWrapping();
     checkAuth();
   });
 
@@ -66,7 +67,7 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="h-screen w-screen flex flex-col overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
+<div class="fixed inset-0 flex flex-col overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
   {#if $authStore.loading}
     <div class="flex-1 flex items-center justify-center">
       <div class="w-8 h-8 border-3 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>

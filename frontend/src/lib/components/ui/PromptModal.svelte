@@ -44,13 +44,13 @@
 <Modal {isOpen} {title} {onClose}>
   <form onsubmit={handleSubmit} class="space-y-4">
     {#if label}
-      <label class="block text-sm font-medium text-[var(--text-muted)]">{label}</label>
+      <label for="prompt-input-field" class="block text-sm font-medium text-[var(--text-muted)]">{label}</label>
     {/if}
     <input
+      id="prompt-input-field"
       type="text"
       bind:value={inputVal}
       {placeholder}
-      autofocus
       class="w-full px-3 py-2 rounded-lg border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)] text-sm"
     />
     <div class="flex justify-end gap-2 pt-2">
@@ -64,7 +64,7 @@
       <button
         type="submit"
         disabled={!inputVal.trim()}
-        class="px-4 py-2 text-sm rounded-lg bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)] disabled:opacity-50 transition"
+        class="px-4 py-2 text-sm rounded-lg bg-[var(--accent)] text-[var(--accent-text)] hover:bg-[var(--accent-hover)] disabled:opacity-50 transition"
       >
         {confirmText || $t('common.save')}
       </button>

@@ -1,6 +1,6 @@
 {
   "name": "marknote",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "scripts": {
     "dev": "npx concurrently -n \"frontend,backend\" -c \"cyan.bold,magenta.bold\" \"npm --prefix frontend run dev\" \"cargo run --manifest-path backend/Cargo.toml\"",

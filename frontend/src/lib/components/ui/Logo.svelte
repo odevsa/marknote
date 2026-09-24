@@ -1,5 +1,5 @@
 <script lang="ts">
-  import logoSvg from '../../../../static/logo.svg?raw';
+  import logoSvg from '$lib/assets/logo.svg?raw';
 
   let { size = 28, class: className = '' }: { size?: number; class?: string } = $props();
   let colorClass = $derived(className.includes('text-') ? className : `text-[var(--accent)] ${className}`);

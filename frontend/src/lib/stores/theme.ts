@@ -19,20 +19,20 @@ export type Theme =
 
 export const themes: { id: Theme; labelKey: string }[] = [
   { id: "system", labelKey: "theme.system" },
-  { id: "light", labelKey: "theme.light" },
+  { id: "catppuccin", labelKey: "theme.catppuccin" },
   { id: "dark", labelKey: "theme.dark" },
-  { id: "paper", labelKey: "theme.paper" },
-  { id: "vscode", labelKey: "theme.vscode" },
   { id: "dracula", labelKey: "theme.dracula" },
-  { id: "onedark", labelKey: "theme.onedark" },
-  { id: "nord", labelKey: "theme.nord" },
+  { id: "gruvbox", labelKey: "theme.gruvbox" },
+  { id: "light", labelKey: "theme.light" },
+  { id: "matrix", labelKey: "theme.matrix" },
   { id: "monokai", labelKey: "theme.monokai" },
+  { id: "nord", labelKey: "theme.nord" },
+  { id: "onedark", labelKey: "theme.onedark" },
+  { id: "paper", labelKey: "theme.paper" },
   { id: "solarized-dark", labelKey: "theme.solarizedDark" },
   { id: "solarized-light", labelKey: "theme.solarizedLight" },
-  { id: "gruvbox", labelKey: "theme.gruvbox" },
   { id: "tokyo-night", labelKey: "theme.tokyoNight" },
-  { id: "catppuccin", labelKey: "theme.catppuccin" },
-  { id: "matrix", labelKey: "theme.matrix" },
+  { id: "vscode", labelKey: "theme.vscode" },
 ];
 
 function getInitialTheme(): Theme {

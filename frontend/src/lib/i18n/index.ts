@@ -1,26 +1,59 @@
 import { writable, derived } from "svelte/store";
 import en from "./locales/en.json";
 import ptBR from "./locales/pt-BR.json";
+import ptPT from "./locales/pt-PT.json";
 import es from "./locales/es.json";
 import fr from "./locales/fr.json";
 import it from "./locales/it.json";
+import de from "./locales/de.json";
+import ja from "./locales/ja.json";
+import zhCN from "./locales/zh-CN.json";
+import ru from "./locales/ru.json";
+import ko from "./locales/ko.json";
+import nl from "./locales/nl.json";
 
-export type Locale = "en" | "pt-BR" | "es" | "fr" | "it";
+export type Locale =
+  | "de"
+  | "en"
+  | "es"
+  | "fr"
+  | "it"
+  | "nl"
+  | "pt-BR"
+  | "pt-PT"
+  | "ru"
+  | "ja"
+  | "zh-CN"
+  | "ko";
 
 export const locales: { id: Locale; label: string }[] = [
+  { id: "de", label: "Deutsch" },
   { id: "en", label: "English" },
-  { id: "pt-BR", label: "Português (BR)" },
   { id: "es", label: "Español" },
   { id: "fr", label: "Français" },
   { id: "it", label: "Italiano" },
+  { id: "nl", label: "Nederlands" },
+  { id: "pt-BR", label: "Português (BR)" },
+  { id: "pt-PT", label: "Português" },
+  { id: "ru", label: "Русский" },
+  { id: "ja", label: "日本語" },
+  { id: "zh-CN", label: "简体中文" },
+  { id: "ko", label: "한국어" },
 ];
 
 const translations: Record<Locale, any> = {
+  de: de,
   en: en,
-  "pt-BR": ptBR,
   es: es,
   fr: fr,
   it: it,
+  nl: nl,
+  "pt-BR": ptBR,
+  "pt-PT": ptPT,
+  ru: ru,
+  ja: ja,
+  "zh-CN": zhCN,
+  ko: ko,
 };
 
 function getInitialLocale(): Locale {
@@ -29,11 +62,18 @@ function getInitialLocale(): Locale {
   const saved = (localStorage.getItem("marknote_locale") || localStorage.getItem("memomark_locale")) as Locale;
   if (saved && translations[saved]) return saved;
 
-  const browserLang = navigator.language;
-  if (browserLang.toLowerCase().startsWith("pt")) return "pt-BR";
-  if (browserLang.toLowerCase().startsWith("es")) return "es";
-  if (browserLang.toLowerCase().startsWith("fr")) return "fr";
-  if (browserLang.toLowerCase().startsWith("it")) return "it";
+  const browserLang = navigator.language.toLowerCase();
+  if (browserLang.startsWith("pt-pt") || browserLang.startsWith("pt-mz") || browserLang.startsWith("pt-ao")) return "pt-PT";
+  if (browserLang.startsWith("pt")) return "pt-BR";
+  if (browserLang.startsWith("es")) return "es";
+  if (browserLang.startsWith("fr")) return "fr";
+  if (browserLang.startsWith("it")) return "it";
+  if (browserLang.startsWith("de")) return "de";
+  if (browserLang.startsWith("ja")) return "ja";
+  if (browserLang.startsWith("zh")) return "zh-CN";
+  if (browserLang.startsWith("ru")) return "ru";
+  if (browserLang.startsWith("ko")) return "ko";
+  if (browserLang.startsWith("nl")) return "nl";
 
   return "en";
 }

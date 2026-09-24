@@ -1,6 +1,21 @@
 import { writable } from "svelte/store";
 
-export type Theme = "system" | "dark" | "light" | "paper" | "vscode" | "matrix";
+export type Theme =
+  | "system"
+  | "dark"
+  | "light"
+  | "paper"
+  | "vscode"
+  | "dracula"
+  | "onedark"
+  | "nord"
+  | "monokai"
+  | "solarized-dark"
+  | "solarized-light"
+  | "gruvbox"
+  | "tokyo-night"
+  | "catppuccin"
+  | "matrix";
 
 export const themes: { id: Theme; labelKey: string }[] = [
   { id: "system", labelKey: "theme.system" },
@@ -8,6 +23,15 @@ export const themes: { id: Theme; labelKey: string }[] = [
   { id: "dark", labelKey: "theme.dark" },
   { id: "paper", labelKey: "theme.paper" },
   { id: "vscode", labelKey: "theme.vscode" },
+  { id: "dracula", labelKey: "theme.dracula" },
+  { id: "onedark", labelKey: "theme.onedark" },
+  { id: "nord", labelKey: "theme.nord" },
+  { id: "monokai", labelKey: "theme.monokai" },
+  { id: "solarized-dark", labelKey: "theme.solarizedDark" },
+  { id: "solarized-light", labelKey: "theme.solarizedLight" },
+  { id: "gruvbox", labelKey: "theme.gruvbox" },
+  { id: "tokyo-night", labelKey: "theme.tokyoNight" },
+  { id: "catppuccin", labelKey: "theme.catppuccin" },
   { id: "matrix", labelKey: "theme.matrix" },
 ];
 

@@ -74,6 +74,15 @@
     "light": "Chiaro",
     "paper": "Carta",
     "vscode": "Code",
+    "dracula": "Dracula",
+    "onedark": "One Dark",
+    "nord": "Nord",
+    "monokai": "Monokai",
+    "solarizedDark": "Solarized Scuro",
+    "solarizedLight": "Solarized Chiaro",
+    "gruvbox": "Gruvbox",
+    "tokyoNight": "Tokyo Night",
+    "catppuccin": "Catppuccin",
     "matrix": "Matrix"
   },
   "lang": {

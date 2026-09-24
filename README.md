@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="frontend/static/favicon.svg" width="80" height="80" alt="MarkNote Logo" />
+  <img src="frontend/src/lib/assets/logo.svg" width="80" height="80" alt="MarkNote Logo" />
   
   **MarkNote**
 

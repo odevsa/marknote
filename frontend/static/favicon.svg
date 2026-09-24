@@ -1,1 +1,12 @@
-../src/lib/assets/logo.svg
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-full h-full">
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M4 2h10l6 6v14H4V2zm3.2 8.8h9.6a0.7 0.7 0 0 1 0.7 0.7 0.7 0.7 0 0 1-0.7 0.7H7.2a0.7 0.7 0 0 1-0.7-0.7 0.7 0.7 0 0 1 0.7-0.7zm0 3.5h9.6a0.7 0.7 0 0 1 0.7 0.7 0.7 0.7 0 0 1-0.7 0.7H7.2a0.7 0.7 0 0 1-0.7-0.7 0.7 0.7 0 0 1 0.7-0.7zm0 3.5h5.6a0.7 0.7 0 0 1 0.7 0.7 0.7 0.7 0 0 1-0.7 0.7H7.2a0.7 0.7 0 0 1-0.7-0.7 0.7 0.7 0 0 1 0.7-0.7z"
+    fill="#ffffff"
+  />
+  <path
+    d="M14 2v6h6z"
+    fill="#cccccc"
+  />
+</svg>

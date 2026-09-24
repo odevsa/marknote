@@ -100,7 +100,7 @@ export function parseCurrentRoute(): ParsedRoute {
       raw = raw.substring(0, raw.length - 6);
     }
 
-    const decodedPath = decodeURIComponent(raw);
+    const decodedPath = decodeURIComponent(raw.replace(/\+/g, "%20"));
     return { path: decodedPath, mode };
   }
 
@@ -108,7 +108,7 @@ export function parseCurrentRoute(): ParsedRoute {
   const searchParams = new URLSearchParams(window.location.search);
   const paramPath = searchParams.get("path") || searchParams.get("note");
   if (paramPath) {
-    return { path: paramPath, mode: "preview" };
+    return { path: decodeURIComponent(paramPath.replace(/\+/g, "%20")), mode: "preview" };
   }
 
   return { path: null, mode: "split" };
@@ -117,7 +117,7 @@ export function parseCurrentRoute(): ParsedRoute {
 export function getRouteUrl(path: string, mode: ViewMode = "preview"): string {
   const encoded = path
     .split("/")
-    .map((seg) => encodeURIComponent(seg))
+    .map((seg) => encodeURIComponent(seg).replace(/%20/g, "+"))
     .join("/");
   if (mode === "edit") {
     return `/file/${encoded}/edit`;

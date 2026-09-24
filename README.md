@@ -45,13 +45,20 @@ All your notes are stored directly as plain `.md` files in a regular folder on y
   - Configurable auto-save toggle and delay (0.5s to 5.0s).
   - Browser `localStorage` draft protection when auto-save is off, with prompt to restore or discard drafts on open.
 - **Deep Linking & Direct Navigation**: Bookmarking or sharing links directly to specific files and modes (`/file/folder/note.md`, `/file/.../edit`, `/file/.../split`).
-- **Dynamic Theme System**: Includes Dark, Light, Paper (sepia book theme), Code (VS Code dark), Matrix, and System auto-detect.
-- **Internationalization (i18n)**: Built-in support for 5 languages:
+- **Dynamic Theme System**: Includes 15 built-in themes inspired by popular IDEs and writing environments (Catppuccin, Dracula, Gruvbox, Monokai, Nord, One Dark, Solarized Dark, Solarized Light, Tokyo Night, VS Code Dark, Paper, Matrix, Dark, Light, and System auto-detect).
+- **Internationalization (i18n)**: Built-in support for 12 languages:
   - English (`en`)
   - Português do Brasil (`pt-BR`)
+  - Português de Portugal (`pt-PT`)
   - Español (`es`)
   - Français (`fr`)
   - Italiano (`it`)
+  - Deutsch (`de`)
+  - Nederlands (`nl`)
+  - Русский (`ru`)
+  - 简体中文 (`zh-CN`)
+  - 日本語 (`ja`)
+  - 한국어 (`ko`)
 - **Privacy-First & Secure**: Self-hosted, single user/admin setup with Argon2id password hashing and HTTP-only JWT sessions.
 - **Single Binary Distribution**: Backend in Rust (Axum) embeds the frontend SPA for lightweight deployment with minimal RAM footprint.
 

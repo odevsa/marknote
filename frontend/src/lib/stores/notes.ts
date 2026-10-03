@@ -273,12 +273,15 @@ export async function saveCurrentNote(): Promise<boolean> {
 export async function createItem(
   path: string,
   isDir: boolean,
+  mode?: ViewMode,
 ): Promise<boolean> {
   try {
     await api.createItem(path, isDir);
     await loadTree();
     if (!isDir) {
-      await openNote(path);
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+      const targetMode: ViewMode = mode || (isMobile ? 'edit' : 'split');
+      await openNote(path, targetMode);
     }
     return true;
   } catch (err) {

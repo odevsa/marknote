@@ -25,6 +25,46 @@
     initEditorFontSize();
     initEditorLineWrapping();
     checkAuth();
+
+    // Prevent virtual keyboard from scrolling window and displacing header
+    if (typeof window !== 'undefined') {
+      const updateViewport = () => {
+        if (window.visualViewport) {
+          const vh = window.visualViewport.height;
+          document.documentElement.style.setProperty(
+            '--visual-viewport-height',
+            `${vh}px`
+          );
+        }
+        if (window.scrollY !== 0 || window.scrollX !== 0) {
+          window.scrollTo(0, 0);
+        }
+      };
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', updateViewport);
+        window.visualViewport.addEventListener('scroll', updateViewport);
+      }
+      window.addEventListener('scroll', updateViewport);
+
+      const handleFocusIn = () => {
+        requestAnimationFrame(updateViewport);
+        setTimeout(updateViewport, 50);
+        setTimeout(updateViewport, 250);
+      };
+      document.addEventListener('focusin', handleFocusIn);
+
+      updateViewport();
+
+      return () => {
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', updateViewport);
+          window.visualViewport.removeEventListener('scroll', updateViewport);
+        }
+        window.removeEventListener('scroll', updateViewport);
+        document.removeEventListener('focusin', handleFocusIn);
+      };
+    }
   });
 
   // Handle route guards and setup redirects
@@ -67,7 +107,10 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<div class="fixed inset-0 flex flex-col overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]">
+<div
+  class="fixed inset-0 flex flex-col overflow-hidden bg-[var(--bg-primary)] text-[var(--text-primary)]"
+  style="height: var(--visual-viewport-height, 100%); max-height: var(--visual-viewport-height, 100%);"
+>
   {#if $authStore.loading}
     <div class="flex-1 flex items-center justify-center">
       <div class="w-8 h-8 border-3 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>

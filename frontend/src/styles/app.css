@@ -1,19 +1,18 @@
 @import "tailwindcss";
 @import "./themes.css";
 
-html {
-  height: -webkit-fill-available;
-}
-
 html,
 body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  height: 100dvh;
-  min-height: -webkit-fill-available;
+  height: var(--visual-viewport-height, 100%);
+  max-height: var(--visual-viewport-height, 100%);
+  position: fixed;
+  inset: 0;
   overflow: hidden;
+  overscroll-behavior: none;
   font-family:
     ui-sans-serif,
     system-ui,
@@ -29,10 +28,11 @@ body {
   scroll-behavior: auto !important;
 }
 
-/* Ensure no smooth scroll animations */
+/* Ensure no smooth scroll animations and contain vertical overscroll */
 textarea,
 .overflow-y-auto {
   scroll-behavior: auto !important;
+  overscroll-behavior-y: contain;
 }
 
 /* Custom scrollbars */

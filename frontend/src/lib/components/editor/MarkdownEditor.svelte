@@ -78,6 +78,7 @@
     },
     '.cm-scroller': {
       overflow: 'auto',
+      overscrollBehaviorY: 'contain',
       fontFamily: 'inherit',
       lineHeight: 'inherit'
     },

@@ -34,7 +34,7 @@
   }
 
   function handleSelect(path: string) {
-    openNote(path);
+    openNote(path, 'preview');
     handleClose();
   }
 

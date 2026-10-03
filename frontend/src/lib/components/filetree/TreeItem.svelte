@@ -60,7 +60,7 @@
       return;
     }
     if (!item.is_dir) {
-      openNote(item.path);
+      openNote(item.path, 'preview');
     } else {
       isOpen = !isOpen;
     }

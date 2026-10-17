@@ -121,7 +121,49 @@
     "draftFoundMessage": "Ein ungespeicherter Entwurf wurde im Browser gefunden. Möchten Sie den Entwurf wiederherstellen oder die Serverversion laden?",
     "restoreDraft": "Entwurf wiederherstellen",
     "discardDraft": "Entwurf verwerfen",
+    "shortcuts": "Tastaturkürzel",
+    "shortcutsHelp": "Alle verfügbaren Kürzel im Editor und System anzeigen",
+    "viewShortcuts": "Tastaturkürzel anzeigen",
     "about": "Über",
     "version": "Version"
+  },
+  "shortcuts": {
+    "title": "Tastaturkürzel",
+    "subtitle": "Kürzel für schnelleres Schreiben und Navigieren",
+    "searchPlaceholder": "Kürzel oder Taste suchen...",
+    "noResults": "Keine Kürzel gefunden für",
+    "all": "Alle",
+    "categories": {
+      "lines": "Bearbeiten & Zeilen",
+      "multicursor": "Multi-Cursor & Auswahl",
+      "markdown": "Markdown-Formatierung",
+      "search": "Suche & Navigation",
+      "general": "Allgemein & System"
+    },
+    "items": {
+      "selectNextOccurrence": "Nächstes Vorkommen auswählen (VSCode)",
+      "selectAllOccurrences": "Alle Vorkommen auswählen",
+      "duplicateLineDown": "Zeile nach unten duplizieren",
+      "duplicateLineUp": "Zeile nach oben duplizieren",
+      "moveLineDown": "Zeile nach unten verschieben",
+      "moveLineUp": "Zeile nach oben verschieben",
+      "deleteLine": "Ganze Zeile löschen",
+      "insertLineBelow": "Zeile darunter einfügen",
+      "addCursorBelow": "Cursor darunter hinzufügen",
+      "addCursorAbove": "Cursor darüber hinzufügen",
+      "bold": "Fett umschalten",
+      "italic": "Kursiv umschalten",
+      "inlineCode": "Inline-Code",
+      "save": "Aktuelle Notiz speichern",
+      "undo": "Rückgängig",
+      "redo": "Wiederholen",
+      "indent": "Zeile einrücken",
+      "unindent": "Zeile ausrücken",
+      "find": "Im Dokument suchen",
+      "quickSearch": "Notizen im Workspace suchen",
+      "openSettings": "Einstellungen öffnen",
+      "openShortcuts": "Tastaturkürzel anzeigen",
+      "close": "Dialoge und Fenster schließen"
+    }
   }
 }

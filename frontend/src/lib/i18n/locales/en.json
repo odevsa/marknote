@@ -121,7 +121,49 @@
     "draftFoundMessage": "An unsaved browser draft was found for this note. Would you like to restore the draft or load the server version?",
     "restoreDraft": "Restore Draft",
     "discardDraft": "Discard Draft",
+    "shortcuts": "Keyboard Shortcuts",
+    "shortcutsHelp": "View all available editor and system shortcuts",
+    "viewShortcuts": "View keyboard shortcuts",
     "about": "About",
     "version": "Version"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "subtitle": "Shortcuts to boost your writing and navigation speed",
+    "searchPlaceholder": "Search shortcuts or keys...",
+    "noResults": "No shortcuts found for",
+    "all": "All",
+    "categories": {
+      "lines": "Lines & Editing",
+      "multicursor": "Multi-Cursor & Selection",
+      "markdown": "Markdown Formatting",
+      "search": "Search & Navigation",
+      "general": "General & System"
+    },
+    "items": {
+      "selectNextOccurrence": "Add selection to next match (VSCode)",
+      "selectAllOccurrences": "Select all occurrences",
+      "duplicateLineDown": "Duplicate line down",
+      "duplicateLineUp": "Duplicate line up",
+      "moveLineDown": "Move line down",
+      "moveLineUp": "Move line up",
+      "deleteLine": "Delete line",
+      "insertLineBelow": "Insert line below",
+      "addCursorBelow": "Add cursor below",
+      "addCursorAbove": "Add cursor above",
+      "bold": "Toggle Bold",
+      "italic": "Toggle Italic",
+      "inlineCode": "Inline Code",
+      "save": "Save current note",
+      "undo": "Undo",
+      "redo": "Redo",
+      "indent": "Indent line",
+      "unindent": "Unindent line",
+      "find": "Find in document",
+      "quickSearch": "Quick search notes in workspace",
+      "openSettings": "Open settings",
+      "openShortcuts": "View keyboard shortcuts",
+      "close": "Close dialogs and panels"
+    }
   }
 }

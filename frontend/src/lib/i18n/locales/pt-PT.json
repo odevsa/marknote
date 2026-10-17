@@ -121,7 +121,49 @@
     "draftFoundMessage": "Existe um rascunho guardado no seu navegador para esta nota. Deseja restaurar o rascunho ou carregar o ficheiro do servidor?",
     "restoreDraft": "Restaurar Rascunho",
     "discardDraft": "Descartar Rascunho",
+    "shortcuts": "Atalhos de Teclado",
+    "shortcutsHelp": "Ver todos os atalhos disponíveis no editor e sistema",
+    "viewShortcuts": "Ver atalhos de teclado",
     "about": "Sobre",
     "version": "Versão"
+  },
+  "shortcuts": {
+    "title": "Atalhos de Teclado",
+    "subtitle": "Atalhos para acelerar a sua escrita e navegação",
+    "searchPlaceholder": "Pesquisar atalho ou tecla...",
+    "noResults": "Nenhum atalho encontrado para",
+    "all": "Todos",
+    "categories": {
+      "lines": "Edição & Linhas",
+      "multicursor": "Multi-Cursor & Seleção",
+      "markdown": "Formatação Markdown",
+      "search": "Busca & Navegação",
+      "general": "Geral & Sistema"
+    },
+    "items": {
+      "selectNextOccurrence": "Selecionar próxima ocorrência (VSCode)",
+      "selectAllOccurrences": "Selecionar todas as ocorrências",
+      "duplicateLineDown": "Duplicar linha para baixo",
+      "duplicateLineUp": "Duplicar linha para cima",
+      "moveLineDown": "Mover linha para baixo",
+      "moveLineUp": "Mover linha para cima",
+      "deleteLine": "Eliminar linha inteira",
+      "insertLineBelow": "Inserir linha abaixo",
+      "addCursorBelow": "Adicionar cursor abaixo",
+      "addCursorAbove": "Adicionar cursor acima",
+      "bold": "Alternar Negrito",
+      "italic": "Alternar Itálico",
+      "inlineCode": "Código Inline",
+      "save": "Guardar nota atual",
+      "undo": "Desfazer",
+      "redo": "Refazer",
+      "indent": "Indentar linha",
+      "unindent": "Desindentar linha",
+      "find": "Procurar no documento",
+      "quickSearch": "Procurar notas na área de trabalho",
+      "openSettings": "Abrir definições",
+      "openShortcuts": "Ver atalhos de teclado",
+      "close": "Fechar janelas e painéis"
+    }
   }
 }

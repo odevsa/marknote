@@ -1,6 +1,7 @@
 import { writable } from "svelte/store";
 
 export const isSettingsOpen = writable<boolean>(false);
+export const isShortcutsOpen = writable<boolean>(false);
 
 export type ViewMode = "split" | "edit" | "preview";
 export const editorViewMode = writable<ViewMode>("split");
@@ -17,6 +18,18 @@ export function closeSettings() {
 
 export function toggleSettings() {
   isSettingsOpen.update((v) => !v);
+}
+
+export function openShortcuts() {
+  isShortcutsOpen.set(true);
+}
+
+export function closeShortcuts() {
+  isShortcutsOpen.set(false);
+}
+
+export function toggleShortcuts() {
+  isShortcutsOpen.update((v) => !v);
 }
 
 export interface FontSizeOption {

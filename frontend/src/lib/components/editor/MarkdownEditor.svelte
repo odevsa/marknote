@@ -4,11 +4,40 @@
   import { appSettings } from '$lib/stores/settings';
   import { editorLineWrapping, editorViewMode, type ViewMode } from '$lib/stores/ui';
   import { renderMarkdown } from '$lib/utils/markdown';
-  import { defaultKeymap, history, historyKeymap, indentWithTab, redo, undo } from '@codemirror/commands';
+  import {
+    defaultKeymap,
+    history,
+    historyKeymap,
+    indentWithTab,
+    redo,
+    undo,
+    copyLineDown,
+    copyLineUp,
+    moveLineDown,
+    moveLineUp,
+    deleteLine,
+    insertBlankLine,
+    addCursorBelow,
+    addCursorAbove
+  } from '@codemirror/commands';
+  import {
+    search,
+    searchKeymap,
+    selectNextOccurrence,
+    selectSelectionMatches,
+    highlightSelectionMatches
+  } from '@codemirror/search';
   import { markdown } from '@codemirror/lang-markdown';
   import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
-  import { Compartment, EditorState } from '@codemirror/state';
-  import { EditorView, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from '@codemirror/view';
+  import { Compartment, EditorSelection, EditorState } from '@codemirror/state';
+  import {
+    EditorView,
+    drawSelection,
+    highlightActiveLine,
+    highlightActiveLineGutter,
+    keymap,
+    lineNumbers
+  } from '@codemirror/view';
   import { tags as t } from '@lezer/highlight';
   import {
       Bold,
@@ -95,7 +124,7 @@
       paddingRight: '10px',
       lineHeight: 'inherit'
     },
-    '&.cm-focused .cm-cursor': {
+    '&.cm-focused .cm-cursor, &.cm-focused .cm-cursor-primary, &.cm-focused .cm-cursor-secondary': {
       borderLeftColor: 'var(--accent)',
       borderLeftWidth: '2px'
     },
@@ -128,6 +157,59 @@
     },
     '.cm-activeLine': {
       backgroundColor: 'var(--active-line-bg, rgba(255, 255, 255, 0.05)) !important'
+    },
+    '.cm-selectionMatch': {
+      backgroundColor: 'var(--selection-bg, rgba(59, 130, 246, 0.25))',
+      outline: '1px solid var(--accent, #3b82f6)',
+      borderRadius: '2px'
+    },
+    '.cm-panels': {
+      backgroundColor: 'var(--card-bg, #1e1e2e) !important',
+      color: 'var(--text-primary) !important',
+      borderBottom: '1px solid var(--border-color) !important',
+      zIndex: '20'
+    },
+    '.cm-panels.cm-panels-top': {
+      borderBottom: '1px solid var(--border-color) !important'
+    },
+    '.cm-panel.cm-search': {
+      padding: '8px 12px',
+      gap: '8px',
+      fontSize: '13px'
+    },
+    '.cm-search input.cm-textfield': {
+      backgroundColor: 'var(--bg-secondary) !important',
+      color: 'var(--text-primary) !important',
+      border: '1px solid var(--border-color) !important',
+      borderRadius: '6px',
+      padding: '4px 8px',
+      outline: 'none',
+      fontSize: '12px'
+    },
+    '.cm-search input.cm-textfield:focus': {
+      borderColor: 'var(--accent) !important',
+      boxShadow: '0 0 0 1px var(--accent)'
+    },
+    '.cm-search button.cm-button': {
+      backgroundColor: 'var(--bg-secondary) !important',
+      color: 'var(--text-primary) !important',
+      border: '1px solid var(--border-color) !important',
+      borderRadius: '6px',
+      padding: '4px 10px',
+      cursor: 'pointer',
+      fontSize: '12px',
+      backgroundImage: 'none'
+    },
+    '.cm-search button.cm-button:hover': {
+      backgroundColor: 'var(--bg-tertiary) !important',
+      borderColor: 'var(--accent) !important'
+    },
+    '.cm-search label': {
+      color: 'var(--text-muted) !important',
+      fontSize: '12px',
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '4px'
     }
   });
 
@@ -250,25 +332,142 @@
       state: EditorState.create({
         doc: $activeNote?.content || '',
         extensions: [
+          EditorState.allowMultipleSelections.of(true),
           lineNumbers(),
           highlightActiveLineGutter(),
           highlightActiveLine(),
           history(),
+          drawSelection(),
+          search({ top: true }),
+          highlightSelectionMatches(),
           lineWrappingCompartment.of($editorLineWrapping ? EditorView.lineWrapping : []),
           markdown(),
           syntaxHighlighting(markdownHighlightStyle),
           editorTheme,
           keymap.of([
-            indentWithTab,
-            ...defaultKeymap,
-            ...historyKeymap,
+            // VSCode-style Ctrl+D / Cmd+D (select next occurrence)
+            {
+              key: 'Mod-d',
+              run: selectNextOccurrence,
+              preventDefault: true
+            },
+            // VSCode-style Ctrl+Shift+L / Cmd+Shift+L (select all occurrences)
+            {
+              key: 'Mod-Shift-l',
+              run: selectSelectionMatches,
+              preventDefault: true
+            },
+            {
+              key: 'Mod-Shift-L',
+              run: selectSelectionMatches,
+              preventDefault: true
+            },
+            // Duplicate lines down / up (Shift+Alt+Down / Shift+Alt+Up)
+            {
+              key: 'Shift-Alt-Down',
+              run: copyLineDown,
+              preventDefault: true
+            },
+            {
+              key: 'Shift-Alt-ArrowDown',
+              run: copyLineDown,
+              preventDefault: true
+            },
+            {
+              key: 'Shift-Alt-Up',
+              run: copyLineUp,
+              preventDefault: true
+            },
+            {
+              key: 'Shift-Alt-ArrowUp',
+              run: copyLineUp,
+              preventDefault: true
+            },
+            // Move lines down / up (Alt+Down / Alt+Up)
+            {
+              key: 'Alt-Down',
+              run: moveLineDown,
+              preventDefault: true
+            },
+            {
+              key: 'Alt-ArrowDown',
+              run: moveLineDown,
+              preventDefault: true
+            },
+            {
+              key: 'Alt-Up',
+              run: moveLineUp,
+              preventDefault: true
+            },
+            {
+              key: 'Alt-ArrowUp',
+              run: moveLineUp,
+              preventDefault: true
+            },
+            // Delete line (Ctrl+Shift+K)
+            {
+              key: 'Mod-Shift-k',
+              run: deleteLine,
+              preventDefault: true
+            },
+            {
+              key: 'Mod-Shift-K',
+              run: deleteLine,
+              preventDefault: true
+            },
+            // Add cursor below / above
+            {
+              key: 'Mod-Alt-Down',
+              run: addCursorBelow,
+              preventDefault: true
+            },
+            {
+              key: 'Mod-Alt-ArrowDown',
+              run: addCursorBelow,
+              preventDefault: true
+            },
+            {
+              key: 'Mod-Alt-Up',
+              run: addCursorAbove,
+              preventDefault: true
+            },
+            {
+              key: 'Mod-Alt-ArrowUp',
+              run: addCursorAbove,
+              preventDefault: true
+            },
+            // Markdown formatting shortcuts
+            {
+              key: 'Mod-b',
+              run: (view) => toggleMarkdownWrap(view, '**', '**'),
+              preventDefault: true
+            },
+            {
+              key: 'Mod-i',
+              run: (view) => toggleMarkdownWrap(view, '*', '*'),
+              preventDefault: true
+            },
+            {
+              key: 'Mod-e',
+              run: (view) => toggleMarkdownWrap(view, '`', '`'),
+              preventDefault: true
+            },
+            {
+              key: 'Mod-Enter',
+              run: insertBlankLine
+            },
+            // Save note
             {
               key: 'Mod-s',
               run: () => {
                 saveCurrentNote();
                 return true;
               }
-            }
+            },
+            ...searchKeymap,
+            indentWithTab,
+            ...defaultKeymap,
+            ...historyKeymap
           ]),
           EditorView.updateListener.of((update) => {
             if (update.docChanged) {
@@ -324,20 +523,61 @@
     }
   }
 
+  function toggleMarkdownWrap(view: EditorView, prefix: string, suffix = prefix): boolean {
+    const ranges = [...view.state.selection.ranges];
+    ranges.sort((a, b) => a.from - b.from);
+
+    const changes: { from: number; to: number; insert: string }[] = [];
+    const newRanges: { anchor: number; head: number }[] = [];
+    let offset = 0;
+
+    for (const range of ranges) {
+      const selected = view.state.sliceDoc(range.from, range.to);
+      const text = selected || 'text';
+      const before = view.state.sliceDoc(Math.max(0, range.from - prefix.length), range.from);
+      const after = view.state.sliceDoc(range.to, range.to + suffix.length);
+
+      if (before === prefix && after === suffix) {
+        changes.push({ from: range.from - prefix.length, to: range.from, insert: '' });
+        changes.push({ from: range.to, to: range.to + suffix.length, insert: '' });
+        const start = range.from - prefix.length + offset;
+        const end = range.to - prefix.length + offset;
+        newRanges.push({ anchor: start, head: end });
+        offset -= prefix.length + suffix.length;
+      } else {
+        changes.push({ from: range.from, to: range.to, insert: prefix + text + suffix });
+        const start = range.from + prefix.length + offset;
+        const end = start + text.length;
+        newRanges.push({ anchor: start, head: end });
+        offset += prefix.length + suffix.length + (selected ? 0 : text.length);
+      }
+    }
+
+    view.dispatch({
+      changes,
+      selection: EditorSelection.create(newRanges.map((r) => EditorSelection.range(r.anchor, r.head)))
+    });
+    return true;
+  }
+
   function insertFormatting(prefix: string, suffix = '') {
     if (!editorView) return;
-    const state = editorView.state;
-    const main = state.selection.main;
-    const selected = state.sliceDoc(main.from, main.to);
-    const text = selected || 'text';
-    const insert = prefix + text + suffix;
-    editorView.dispatch({
-      changes: { from: main.from, to: main.to, insert },
-      selection: {
-        anchor: main.from + prefix.length,
-        head: main.from + prefix.length + text.length
-      }
-    });
+    if (suffix) {
+      toggleMarkdownWrap(editorView, prefix, suffix);
+    } else {
+      const state = editorView.state;
+      const main = state.selection.main;
+      const selected = state.sliceDoc(main.from, main.to);
+      const text = selected || 'text';
+      const insert = prefix + text;
+      editorView.dispatch({
+        changes: { from: main.from, to: main.to, insert },
+        selection: {
+          anchor: main.from + prefix.length,
+          head: main.from + prefix.length + text.length
+        }
+      });
+    }
     editorView.focus();
   }
 

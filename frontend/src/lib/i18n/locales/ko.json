@@ -121,7 +121,49 @@
     "draftFoundMessage": "브라우저에서 저장되지 않은 임시 저장을 발견했습니다. 복구하시겠습니까, 아니면 서버 버전을 불러오시겠습니까?",
     "restoreDraft": "임시 저장 복구",
     "discardDraft": "임시 저장 삭제",
+    "shortcuts": "단축키",
+    "shortcutsHelp": "편집기 및 시스템에서 사용 가능한 모든 단축키 확인",
+    "viewShortcuts": "단축키 목록 보기",
     "about": "정보",
     "version": "버전"
+  },
+  "shortcuts": {
+    "title": "단축키",
+    "subtitle": "작성 및 탐색 속도를 높여주는 단축키 모음",
+    "searchPlaceholder": "단축키 또는 키 검색...",
+    "noResults": "검색 결과가 없습니다:",
+    "all": "전체",
+    "categories": {
+      "lines": "편집 및 줄 작업",
+      "multicursor": "다중 커서 및 선택",
+      "markdown": "마크다운 서식",
+      "search": "검색 및 탐색",
+      "general": "일반 및 시스템"
+    },
+    "items": {
+      "selectNextOccurrence": "다음 일치 항목 선택 (VSCode)",
+      "selectAllOccurrences": "모든 일치 항목 선택",
+      "duplicateLineDown": "아래로 줄 복제",
+      "duplicateLineUp": "위로 줄 복제",
+      "moveLineDown": "아래로 줄 이동",
+      "moveLineUp": "위로 줄 이동",
+      "deleteLine": "줄 전체 삭제",
+      "insertLineBelow": "아래에 빈 줄 삽입",
+      "addCursorBelow": "아래에 커서 추가",
+      "addCursorAbove": "위에 커서 추가",
+      "bold": "굵게 전환",
+      "italic": "기울임꼴 전환",
+      "inlineCode": "인라인 코드",
+      "save": "현재 노트 저장",
+      "undo": "실행 취소",
+      "redo": "다시 실행",
+      "indent": "들여쓰기",
+      "unindent": "내어쓰기",
+      "find": "문서 내 검색",
+      "quickSearch": "작업 공간 내 노트 검색",
+      "openSettings": "설정 열기",
+      "openShortcuts": "단축키 목록 보기",
+      "close": "대화상자 및 패널 닫기"
+    }
   }
 }

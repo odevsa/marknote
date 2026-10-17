@@ -121,7 +121,49 @@
     "draftFoundMessage": "Se encontró un borrador sin guardar en el navegador para esta nota. ¿Deseas restaurar el borrador o cargar la versión del servidor?",
     "restoreDraft": "Restaurar Borrador",
     "discardDraft": "Descartar Borrador",
+    "shortcuts": "Atajos de Teclado",
+    "shortcutsHelp": "Ver todos los atajos disponibles en el editor y sistema",
+    "viewShortcuts": "Ver atajos de teclado",
     "about": "Acerca de",
     "version": "Versión"
+  },
+  "shortcuts": {
+    "title": "Atajos de Teclado",
+    "subtitle": "Atajos para acelerar tu escritura y navegación",
+    "searchPlaceholder": "Buscar atajo o tecla...",
+    "noResults": "No se encontraron atajos para",
+    "all": "Todos",
+    "categories": {
+      "lines": "Edición y Líneas",
+      "multicursor": "Multicursor y Selección",
+      "markdown": "Formato Markdown",
+      "search": "Búsqueda y Navegación",
+      "general": "General y Sistema"
+    },
+    "items": {
+      "selectNextOccurrence": "Seleccionar siguiente coincidencia (VSCode)",
+      "selectAllOccurrences": "Seleccionar todas las coincidencias",
+      "duplicateLineDown": "Duplicar línea hacia abajo",
+      "duplicateLineUp": "Duplicar línea hacia arriba",
+      "moveLineDown": "Mover línea hacia abajo",
+      "moveLineUp": "Mover línea hacia arriba",
+      "deleteLine": "Eliminar línea completa",
+      "insertLineBelow": "Insertar línea debajo",
+      "addCursorBelow": "Agregar cursor abajo",
+      "addCursorAbove": "Agregar cursor arriba",
+      "bold": "Alternar Negrita",
+      "italic": "Alternar Cursiva",
+      "inlineCode": "Código en línea",
+      "save": "Guardar nota actual",
+      "undo": "Deshacer",
+      "redo": "Rehacer",
+      "indent": "Indentar línea",
+      "unindent": "Desindentar línea",
+      "find": "Buscar en el documento",
+      "quickSearch": "Buscar notas en el espacio de trabajo",
+      "openSettings": "Abrir configuración",
+      "openShortcuts": "Ver atajos de teclado",
+      "close": "Cerrar ventanas y paneles"
+    }
   }
 }

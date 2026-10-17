@@ -121,7 +121,49 @@
     "draftFoundMessage": "未保存の下書きが見つかりました。下書きを復元しますか？それともサーバー版を読み込みますか？",
     "restoreDraft": "下書きを復元",
     "discardDraft": "下書きを破棄",
+    "shortcuts": "キーボードショートカット",
+    "shortcutsHelp": "エディタとシステムで利用可能なすべてのショートカットを表示",
+    "viewShortcuts": "ショートカット一覧を表示",
     "about": "情報",
     "version": "バージョン"
+  },
+  "shortcuts": {
+    "title": "キーボードショートカット",
+    "subtitle": "執筆と操作を高速化するショートカット一覧",
+    "searchPlaceholder": "ショートカットまたはキーを検索...",
+    "noResults": "見つかりませんでした:",
+    "all": "すべて",
+    "categories": {
+      "lines": "編集・行操作",
+      "multicursor": "マルチカーソル・選択",
+      "markdown": "Markdown書式設定",
+      "search": "検索・ナビゲーション",
+      "general": "全般・システム"
+    },
+    "items": {
+      "selectNextOccurrence": "次の一致を選択 (VSCode)",
+      "selectAllOccurrences": "すべての一致を選択",
+      "duplicateLineDown": "行を下に複製",
+      "duplicateLineUp": "行を上に複製",
+      "moveLineDown": "行を下に移動",
+      "moveLineUp": "行を上に移動",
+      "deleteLine": "行全体を削除",
+      "insertLineBelow": "下に行を挿入",
+      "addCursorBelow": "下にカーソルを追加",
+      "addCursorAbove": "上にカーソルを追加",
+      "bold": "太字の切り替え",
+      "italic": "斜体の切り替え",
+      "inlineCode": "インラインコード",
+      "save": "現在のノートを保存",
+      "undo": "元に戻す",
+      "redo": "やり直す",
+      "indent": "インデントを追加",
+      "unindent": "インデントを減らす",
+      "find": "ドキュメント内を検索",
+      "quickSearch": "ワークスペース内のノートを検索",
+      "openSettings": "設定を開く",
+      "openShortcuts": "ショートカット一覧を表示",
+      "close": "ダイアログやパネルを閉じる"
+    }
   }
 }

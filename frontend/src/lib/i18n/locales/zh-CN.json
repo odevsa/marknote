@@ -121,7 +121,49 @@
     "draftFoundMessage": "在浏览器中找到了未保存的草稿。您想恢复草稿还是加载服务器版本？",
     "restoreDraft": "恢复草稿",
     "discardDraft": "放弃草稿",
+    "shortcuts": "快捷键",
+    "shortcutsHelp": "查看编辑器和系统中的所有可用快捷键",
+    "viewShortcuts": "查看快捷键",
     "about": "关于",
     "version": "版本"
+  },
+  "shortcuts": {
+    "title": "快捷键",
+    "subtitle": "提升文本输入与导航效率的快捷键",
+    "searchPlaceholder": "搜索快捷键或按键...",
+    "noResults": "未找到相关快捷键：",
+    "all": "全部",
+    "categories": {
+      "lines": "编辑与行操作",
+      "multicursor": "多光标与选择",
+      "markdown": "Markdown格式化",
+      "search": "搜索与导航",
+      "general": "通用与系统"
+    },
+    "items": {
+      "selectNextOccurrence": "选中下一个匹配项 (VSCode)",
+      "selectAllOccurrences": "选中所有匹配项",
+      "duplicateLineDown": "向下复制当前行",
+      "duplicateLineUp": "向上复制当前行",
+      "moveLineDown": "向下移动当前行",
+      "moveLineUp": "向上移动当前行",
+      "deleteLine": "删除整行",
+      "insertLineBelow": "在下方插入空行",
+      "addCursorBelow": "在下方添加光标",
+      "addCursorAbove": "在上方添加光标",
+      "bold": "切换加粗",
+      "italic": "切换斜体",
+      "inlineCode": "行内代码",
+      "save": "保存当前笔记",
+      "undo": "撤销",
+      "redo": "重做",
+      "indent": "增加缩进",
+      "unindent": "减少缩进",
+      "find": "在文档中查找",
+      "quickSearch": "快速搜索工作区笔记",
+      "openSettings": "打开设置",
+      "openShortcuts": "查看快捷键",
+      "close": "关闭对话框和面板"
+    }
   }
 }

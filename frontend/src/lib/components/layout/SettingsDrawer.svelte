@@ -8,11 +8,21 @@
     ChevronDown,
     Save,
     LayoutGrid,
-    WrapText
+    WrapText,
+    Keyboard
   } from 'lucide-svelte';
   import { t, currentLocale, setLocale, locales, type Locale } from '$lib/i18n';
   import { themeStore, setTheme, themes, type Theme } from '$lib/stores/theme';
-  import { isSettingsOpen, closeSettings, editorFontSize, setEditorFontSize, fontSizes, editorLineWrapping, setEditorLineWrapping } from '$lib/stores/ui';
+  import {
+    isSettingsOpen,
+    closeSettings,
+    editorFontSize,
+    setEditorFontSize,
+    fontSizes,
+    editorLineWrapping,
+    setEditorLineWrapping,
+    openShortcuts
+  } from '$lib/stores/ui';
   import { appSettings, updateAppSettings } from '$lib/stores/settings';
   import { APP_VERSION } from '$lib/version';
   import Logo from '$lib/components/ui/Logo.svelte';
@@ -267,6 +277,37 @@
             </div>
           </div>
         {/if}
+      </div>
+
+      <!-- Section: Keyboard Shortcuts -->
+      <div class="space-y-3 pt-4 border-t border-[var(--border-color)]">
+        <div class="flex items-center justify-between">
+          <div class="flex flex-col gap-0.5">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] flex items-center gap-2">
+              <Keyboard size={16} class="text-[var(--accent)]" />
+              <span>{$t('settings.shortcuts')}</span>
+            </span>
+            <span class="text-[11px] text-[var(--text-muted)]">
+              {$t('settings.shortcutsHelp')}
+            </span>
+          </div>
+        </div>
+
+        <button
+          onclick={() => {
+            closeSettings();
+            openShortcuts();
+          }}
+          class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-[var(--border-color)] bg-[var(--bg-secondary)] hover:bg-[var(--bg-tertiary)] hover:border-[var(--accent)] text-[var(--text-primary)] text-sm font-medium transition cursor-pointer group"
+        >
+          <span class="flex items-center gap-2 group-hover:text-[var(--accent)] transition">
+            <Keyboard size={16} class="text-[var(--text-muted)] group-hover:text-[var(--accent)] transition" />
+            <span>{$t('settings.viewShortcuts')}</span>
+          </span>
+          <kbd class="px-2 py-0.5 text-[10px] font-mono font-semibold rounded border border-[var(--border-color)] bg-[var(--bg-primary)] text-[var(--text-muted)] group-hover:text-[var(--accent)] group-hover:border-[var(--accent)] transition">
+            F1
+          </kbd>
+        </button>
       </div>
 
       <!-- Section: About -->

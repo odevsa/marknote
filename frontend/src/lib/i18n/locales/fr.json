@@ -121,7 +121,49 @@
     "draftFoundMessage": "Un brouillon non enregistré a été trouvé dans le navigateur pour cette note. Voulez-vous restaurer le brouillon ou charger la version du serveur ?",
     "restoreDraft": "Restaurer le brouillon",
     "discardDraft": "Ignorer le brouillon",
+    "shortcuts": "Raccourcis Clavier",
+    "shortcutsHelp": "Voir tous les raccourcis disponibles dans l'éditeur et le système",
+    "viewShortcuts": "Voir les raccourcis clavier",
     "about": "À propos",
     "version": "Version"
+  },
+  "shortcuts": {
+    "title": "Raccourcis Clavier",
+    "subtitle": "Raccourcis pour booster votre vitesse d'écriture et de navigation",
+    "searchPlaceholder": "Rechercher un raccourci ou une touche...",
+    "noResults": "Aucun raccourci trouvé pour",
+    "all": "Tous",
+    "categories": {
+      "lines": "Édition et Lignes",
+      "multicursor": "Multi-Curseur et Sélection",
+      "markdown": "Formatage Markdown",
+      "search": "Recherche et Navigation",
+      "general": "Général et Système"
+    },
+    "items": {
+      "selectNextOccurrence": "Sélectionner l'occurrence suivante (VSCode)",
+      "selectAllOccurrences": "Sélectionner toutes les occurrences",
+      "duplicateLineDown": "Dupliquer la ligne vers le bas",
+      "duplicateLineUp": "Dupliquer la ligne vers le haut",
+      "moveLineDown": "Déplacer la ligne vers le bas",
+      "moveLineUp": "Déplacer la ligne vers le haut",
+      "deleteLine": "Supprimer la ligne entière",
+      "insertLineBelow": "Insérer une ligne en dessous",
+      "addCursorBelow": "Ajouter un curseur en dessous",
+      "addCursorAbove": "Ajouter un curseur au-dessus",
+      "bold": "Basculer Gras",
+      "italic": "Basculer Italique",
+      "inlineCode": "Code en ligne",
+      "save": "Enregistrer la note actuelle",
+      "undo": "Annuler",
+      "redo": "Rétablir",
+      "indent": "Indenter la ligne",
+      "unindent": "Désindenter la ligne",
+      "find": "Rechercher dans le document",
+      "quickSearch": "Recherche rapide de notes",
+      "openSettings": "Ouvrir les paramètres",
+      "openShortcuts": "Voir les raccourcis clavier",
+      "close": "Fermer les boîtes de dialogue et panneaux"
+    }
   }
 }

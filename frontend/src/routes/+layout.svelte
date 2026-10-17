@@ -15,7 +15,8 @@
   import SettingsDrawer from '$lib/components/layout/SettingsDrawer.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
   import DraftRecoveryDialog from '$lib/components/ui/DraftRecoveryDialog.svelte';
-  import { initEditorFontSize, initEditorLineWrapping } from '$lib/stores/ui';
+  import ShortcutsModal from '$lib/components/ui/ShortcutsModal.svelte';
+  import { initEditorFontSize, initEditorLineWrapping, openSettings, openShortcuts } from '$lib/stores/ui';
   import { t } from '$lib/i18n';
 
   let { children } = $props();
@@ -97,10 +98,25 @@
   });
 
   function handleKeydown(e: KeyboardEvent) {
-    // Global Ctrl+K / Cmd+K search shortcut
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+    // Global Ctrl+K / Cmd+K search shortcut (must NOT trigger on Ctrl+Shift+K or Alt)
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {
       e.preventDefault();
       isSearchOpen.set(true);
+      return;
+    }
+
+    // F1 or Ctrl+/ / Cmd+/ opens Keyboard Shortcuts modal
+    if (e.key === 'F1' || ((e.ctrlKey || e.metaKey) && !e.altKey && e.key === '/')) {
+      e.preventDefault();
+      openShortcuts();
+      return;
+    }
+
+    // Ctrl+, / Cmd+, opens Settings
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key === ',') {
+      e.preventDefault();
+      openSettings();
+      return;
     }
   }
 </script>
@@ -122,6 +138,7 @@
 
 <SearchModal />
 <SettingsDrawer />
+<ShortcutsModal />
 <DraftRecoveryDialog />
 
 <ConfirmDialog

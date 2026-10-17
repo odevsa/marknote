@@ -121,7 +121,49 @@
     "draftFoundMessage": "Er is een niet-opgeslagen concept gevonden in de browser. Wilt u het concept herstellen of de serverversie laden?",
     "restoreDraft": "Concept herstellen",
     "discardDraft": "Concept negeren",
+    "shortcuts": "Sneltoetsen",
+    "shortcutsHelp": "Bekijk alle beschikbare sneltoetsen in de editor en het systeem",
+    "viewShortcuts": "Sneltoetsen weergeven",
     "about": "Over",
     "version": "Versie"
+  },
+  "shortcuts": {
+    "title": "Sneltoetsen",
+    "subtitle": "Sneltoetsen om sneller te schrijven en navigeren",
+    "searchPlaceholder": "Zoek sneltoets of toets...",
+    "noResults": "Geen sneltoetsen gevonden voor",
+    "all": "Alle",
+    "categories": {
+      "lines": "Bewerken & Regels",
+      "multicursor": "Multi-Cursor & Selectie",
+      "markdown": "Markdown-opmaak",
+      "search": "Zoeken & Navigatie",
+      "general": "Algemeen & Systeem"
+    },
+    "items": {
+      "selectNextOccurrence": "Volgende instantie selecteren (VSCode)",
+      "selectAllOccurrences": "Alle instanties selecteren",
+      "duplicateLineDown": "Regel naar beneden dupliceren",
+      "duplicateLineUp": "Regel naar boven dupliceren",
+      "moveLineDown": "Regel naar beneden verplaatsen",
+      "moveLineUp": "Regel naar boven verplaatsen",
+      "deleteLine": "Hele regel verwijderen",
+      "insertLineBelow": "Regel eronder invoegen",
+      "addCursorBelow": "Cursor eronder toevoegen",
+      "addCursorAbove": "Cursor erboven toevoegen",
+      "bold": "Vetgedrukt in-/uitschakelen",
+      "italic": "Cursief in-/uitschakelen",
+      "inlineCode": "Inline code",
+      "save": "Huidige notitie opslaan",
+      "undo": "Ongedaan maken",
+      "redo": "Opnieuw",
+      "indent": "Regel inspringen",
+      "unindent": "Inspringing verkleinen",
+      "find": "Zoeken in document",
+      "quickSearch": "Notities zoeken in werkruimte",
+      "openSettings": "Instellingen openen",
+      "openShortcuts": "Sneltoetsen weergeven",
+      "close": "Vensters en panelen sluiten"
+    }
   }
 }

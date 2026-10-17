@@ -121,7 +121,49 @@
     "draftFoundMessage": "È stata trovata una bozza non salvata nel browser per questa nota. Vuoi ripristinare la bozza o caricare la versione dal server?",
     "restoreDraft": "Ripristina bozza",
     "discardDraft": "Scarta bozza",
+    "shortcuts": "Scorciatoie da Tastiera",
+    "shortcutsHelp": "Visualizza tutte le scorciatoie disponibili nell'editor e nel sistema",
+    "viewShortcuts": "Visualizza scorciatoie",
     "about": "Informazioni",
     "version": "Versione"
+  },
+  "shortcuts": {
+    "title": "Scorciatoie da Tastiera",
+    "subtitle": "Scorciatoie per velocizzare la scrittura e la navigazione",
+    "searchPlaceholder": "Cerca scorciatoia o tasto...",
+    "noResults": "Nessuna scorciatoia trovata per",
+    "all": "Tutte",
+    "categories": {
+      "lines": "Modifica e Righe",
+      "multicursor": "Multi-Cursore e Selezione",
+      "markdown": "Formattazione Markdown",
+      "search": "Ricerca e Navigazione",
+      "general": "Generale e Sistema"
+    },
+    "items": {
+      "selectNextOccurrence": "Seleziona occorrenza successiva (VSCode)",
+      "selectAllOccurrences": "Seleziona tutte le occorrenze",
+      "duplicateLineDown": "Duplica riga in basso",
+      "duplicateLineUp": "Duplica riga in alto",
+      "moveLineDown": "Sposta riga in basso",
+      "moveLineUp": "Sposta riga in alto",
+      "deleteLine": "Elimina riga intera",
+      "insertLineBelow": "Inserisci riga sotto",
+      "addCursorBelow": "Aggiungi cursore sotto",
+      "addCursorAbove": "Aggiungi cursore sopra",
+      "bold": "Attiva/disattiva Grassetto",
+      "italic": "Attiva/disattiva Corsivo",
+      "inlineCode": "Codice in linea",
+      "save": "Salva nota corrente",
+      "undo": "Annulla",
+      "redo": "Ripeti",
+      "indent": "Rientra riga",
+      "unindent": "Riduci rientro riga",
+      "find": "Cerca nel documento",
+      "quickSearch": "Cerca note nell'area di lavoro",
+      "openSettings": "Apri impostazioni",
+      "openShortcuts": "Visualizza scorciatoie",
+      "close": "Chiudi finestre e pannelli"
+    }
   }
 }

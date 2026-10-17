@@ -16,7 +16,44 @@ export const searchQuery = writable<string>("");
 export const searchResults = writable<SearchResult[]>([]);
 export const isSearching = writable<boolean>(false);
 export const isSearchOpen = writable<boolean>(false);
-export const sidebarOpen = writable<boolean>(false);
+function createSidebarStore() {
+  const isBrowser = typeof window !== 'undefined';
+  const initial = isBrowser
+    ? (window.innerWidth >= 768 ? localStorage.getItem('marknote_sidebar_open') !== 'false' : false)
+    : true;
+
+  const { subscribe, set, update } = writable<boolean>(initial);
+
+  return {
+    subscribe,
+    set: (value: boolean) => {
+      if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+        localStorage.setItem('marknote_sidebar_open', String(value));
+      }
+      set(value);
+    },
+    update: (fn: (current: boolean) => boolean) => {
+      update((current) => {
+        const next = fn(current);
+        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+          localStorage.setItem('marknote_sidebar_open', String(next));
+        }
+        return next;
+      });
+    },
+    toggle: () => {
+      update((current) => {
+        const next = !current;
+        if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+          localStorage.setItem('marknote_sidebar_open', String(next));
+        }
+        return next;
+      });
+    }
+  };
+}
+
+export const sidebarOpen = createSidebarStore();
 
 // Draft & Unsaved Confirmation Modals
 export const showUnsavedConfirmModal = writable<boolean>(false);
@@ -158,7 +195,9 @@ export async function openNote(path: string, mode?: ViewMode, force = false): Pr
     editorViewMode.set(targetMode);
 
     // On mobile, close sidebar when a note is opened
-    sidebarOpen.set(false);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      sidebarOpen.set(false);
+    }
 
     if (typeof window !== "undefined") {
       const targetUrl = getRouteUrl(res.path, targetMode);

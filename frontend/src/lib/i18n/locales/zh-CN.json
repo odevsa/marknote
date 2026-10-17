@@ -37,7 +37,8 @@
     "selectNoteToView": "从侧边栏选择笔记或新建笔记开始编辑。",
     "allNotes": "所有笔记",
     "recentNotes": "最近笔记",
-    "edit": "编辑"
+    "edit": "编辑",
+    "toggleSidebar": "切换侧边栏"
   },
   "editor": {
     "edit": "编辑",

@@ -4,7 +4,9 @@
     Search,
     Settings,
     LogOut,
-    User
+    User,
+    PanelLeft,
+    PanelLeftClose
   } from 'lucide-svelte';
   import { t } from '$lib/i18n';
   import { authStore, logoutUser } from '$lib/stores/auth';
@@ -26,10 +28,20 @@
   <div class="flex items-center gap-2 sm:gap-3">
     <button
       onclick={toggleSidebar}
-      class="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] md:hidden transition cursor-pointer"
-      aria-label="Toggle navigation menu"
+      class="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-tertiary)] transition cursor-pointer"
+      title={$t('common.toggleSidebar')}
+      aria-label={$t('common.toggleSidebar')}
     >
-      <Menu size={22} class="sm:size-[20px]" />
+      <span class="md:hidden flex items-center justify-center">
+        <Menu size={22} class="sm:size-[20px]" />
+      </span>
+      <span class="hidden md:flex items-center justify-center">
+        {#if $sidebarOpen}
+          <PanelLeftClose size={20} />
+        {:else}
+          <PanelLeft size={20} />
+        {/if}
+      </span>
     </button>
 
     <div

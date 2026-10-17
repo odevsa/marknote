@@ -37,7 +37,8 @@
     "selectNoteToView": "사이드바에서 노트를 선택하거나 새 노트를 생성하여 편집을 시작하세요.",
     "allNotes": "모든 노트",
     "recentNotes": "최근 노트",
-    "edit": "편집"
+    "edit": "편집",
+    "toggleSidebar": "사이드바 전환"
   },
   "editor": {
     "edit": "편집",

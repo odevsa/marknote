@@ -37,7 +37,8 @@
     "selectNoteToView": "Sélectionnez une note dans la barre latérale ou créez-en une nouvelle pour commencer.",
     "allNotes": "Notes",
     "recentNotes": "Récents",
-    "edit": "Éditer"
+    "edit": "Éditer",
+    "toggleSidebar": "Basculer la barre latérale"
   },
   "editor": {
     "edit": "Éditer",

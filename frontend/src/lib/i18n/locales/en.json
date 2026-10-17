@@ -37,7 +37,8 @@
     "selectNoteToView": "Select a note from the sidebar or create a new one to begin editing.",
     "allNotes": "Notes",
     "recentNotes": "Recents",
-    "edit": "Edit"
+    "edit": "Edit",
+    "toggleSidebar": "Toggle sidebar"
   },
   "editor": {
     "edit": "Edit",

@@ -37,7 +37,8 @@
     "selectNoteToView": "Selecteer een notitie in de zijbalk of maak een nieuwe aan.",
     "allNotes": "Notities",
     "recentNotes": "Recent",
-    "edit": "Bewerken"
+    "edit": "Bewerken",
+    "toggleSidebar": "Zijbalk in-/uitschakelen"
   },
   "editor": {
     "edit": "Bewerken",

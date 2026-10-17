@@ -37,7 +37,8 @@
     "selectNoteToView": "Wählen Sie eine Notiz in der Seitenleiste aus oder erstellen Sie eine neue.",
     "allNotes": "Notizen",
     "recentNotes": "Zuletzt verwendet",
-    "edit": "Bearbeiten"
+    "edit": "Bearbeiten",
+    "toggleSidebar": "Seitenleiste umschalten"
   },
   "editor": {
     "edit": "Bearbeiten",

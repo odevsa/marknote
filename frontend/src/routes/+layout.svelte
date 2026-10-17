@@ -6,17 +6,34 @@
   import { authStore, checkAuth } from '$lib/stores/auth';
   import { initThemeListener } from '$lib/stores/theme';
   import {
+    activeNote,
     isSearchOpen,
     showUnsavedConfirmModal,
     confirmDiscardAndNavigate,
-    pendingTargetRoute
+    pendingTargetRoute,
+    renameModalState,
+    deleteModalState,
+    promptRename,
+    promptDelete,
+    closeRenameModal,
+    closeDeleteModal,
+    renameItem,
+    deleteItem
   } from '$lib/stores/notes';
   import SearchModal from '$lib/components/SearchModal.svelte';
   import SettingsDrawer from '$lib/components/layout/SettingsDrawer.svelte';
   import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
+  import PromptModal from '$lib/components/ui/PromptModal.svelte';
   import DraftRecoveryDialog from '$lib/components/ui/DraftRecoveryDialog.svelte';
   import ShortcutsModal from '$lib/components/ui/ShortcutsModal.svelte';
-  import { initEditorFontSize, initEditorLineWrapping, openSettings, openShortcuts } from '$lib/stores/ui';
+  import {
+    initEditorFontSize,
+    initEditorLineWrapping,
+    openSettings,
+    openShortcuts,
+    isSettingsOpen,
+    isShortcutsOpen
+  } from '$lib/stores/ui';
   import { t } from '$lib/i18n';
 
   let { children } = $props();
@@ -97,6 +114,15 @@
     }
   });
 
+  function isEditableElement(target: EventTarget | null): boolean {
+    if (!target || !(target instanceof HTMLElement)) return false;
+    const tag = target.tagName.toLowerCase();
+    if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+    if (target.isContentEditable) return true;
+    if (target.closest('.cm-editor') || target.closest('[contenteditable="true"]')) return true;
+    return false;
+  }
+
   function handleKeydown(e: KeyboardEvent) {
     // Global Ctrl+K / Cmd+K search shortcut (must NOT trigger on Ctrl+Shift+K or Alt)
     if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {
@@ -117,6 +143,42 @@
       e.preventDefault();
       openSettings();
       return;
+    }
+
+    // F2: rename active note
+    if (e.key === 'F2') {
+      const active = $activeNote;
+      if (
+        active &&
+        !$renameModalState.isOpen &&
+        !$deleteModalState.isOpen &&
+        !$isSearchOpen &&
+        !$isSettingsOpen &&
+        !$isShortcutsOpen &&
+        !$showUnsavedConfirmModal
+      ) {
+        e.preventDefault();
+        promptRename(active.path);
+        return;
+      }
+    }
+
+    // Delete: delete active note (only when NOT typing in an editable field)
+    if (e.key === 'Delete' && !isEditableElement(e.target)) {
+      const active = $activeNote;
+      if (
+        active &&
+        !$renameModalState.isOpen &&
+        !$deleteModalState.isOpen &&
+        !$isSearchOpen &&
+        !$isSettingsOpen &&
+        !$isShortcutsOpen &&
+        !$showUnsavedConfirmModal
+      ) {
+        e.preventDefault();
+        promptDelete(active.path, false);
+        return;
+      }
     }
   }
 </script>
@@ -152,5 +214,34 @@
     showUnsavedConfirmModal.set(false);
     pendingTargetRoute.set(null);
   }}
+/>
+
+<PromptModal
+  isOpen={$renameModalState.isOpen}
+  title={$t('common.rename')}
+  initialValue={$renameModalState.currentName}
+  placeholder="New name..."
+  confirmText={$t('common.save')}
+  onConfirm={async (newName) => {
+    const targetPath = $renameModalState.path;
+    const parent = targetPath.includes('/')
+      ? targetPath.substring(0, targetPath.lastIndexOf('/'))
+      : '';
+    const newPath = parent ? `${parent}/${newName}` : newName;
+    await renameItem(targetPath, newPath);
+  }}
+  onClose={closeRenameModal}
+/>
+
+<ConfirmDialog
+  isOpen={$deleteModalState.isOpen}
+  title={$t('common.delete')}
+  message={`${$t('common.confirmDelete')} "${$deleteModalState.path}"?`}
+  danger={true}
+  confirmText={$t('common.delete')}
+  onConfirm={async () => {
+    await deleteItem($deleteModalState.path);
+  }}
+  onClose={closeDeleteModal}
 />
 

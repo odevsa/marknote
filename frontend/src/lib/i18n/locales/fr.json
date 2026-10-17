@@ -155,6 +155,8 @@
       "bold": "Basculer Gras",
       "italic": "Basculer Italique",
       "inlineCode": "Code en ligne",
+      "renameFile": "Renommer le fichier ou dossier",
+      "deleteFile": "Supprimer le fichier ou dossier",
       "save": "Enregistrer la note actuelle",
       "undo": "Annuler",
       "redo": "Rétablir",

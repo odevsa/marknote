@@ -155,6 +155,8 @@
       "bold": "Toggle Bold",
       "italic": "Toggle Italic",
       "inlineCode": "Inline Code",
+      "renameFile": "Rename file or folder",
+      "deleteFile": "Delete file or folder",
       "save": "Save current note",
       "undo": "Undo",
       "redo": "Redo",

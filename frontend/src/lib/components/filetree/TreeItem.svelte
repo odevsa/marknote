@@ -103,6 +103,139 @@
       touchTimer = null;
     }
   }
+
+  function handleKeydown(e: KeyboardEvent) {
+    const rowEl = e.currentTarget as HTMLElement;
+    const treeContainer = rowEl.closest('.file-tree-container');
+    const allVisible = Array.from(treeContainer?.querySelectorAll<HTMLElement>('.tree-item-row') || []);
+    const currentIndex = allVisible.indexOf(rowEl);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentIndex >= 0 && currentIndex < allVisible.length - 1) {
+        const target = allVisible[currentIndex + 1];
+        target?.focus();
+        target?.scrollIntoView({ block: 'nearest' });
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentIndex > 0) {
+        const target = allVisible[currentIndex - 1];
+        target?.focus();
+        target?.scrollIntoView({ block: 'nearest' });
+      }
+      return;
+    }
+
+    if (e.key === 'PageDown') {
+      e.preventDefault();
+      if (currentIndex >= 0) {
+        const nextIdx = Math.min(currentIndex + 8, allVisible.length - 1);
+        const target = allVisible[nextIdx];
+        target?.focus();
+        target?.scrollIntoView({ block: 'nearest' });
+      }
+      return;
+    }
+
+    if (e.key === 'PageUp') {
+      e.preventDefault();
+      if (currentIndex >= 0) {
+        const prevIdx = Math.max(currentIndex - 8, 0);
+        const target = allVisible[prevIdx];
+        target?.focus();
+        target?.scrollIntoView({ block: 'nearest' });
+      }
+      return;
+    }
+
+    if (e.key === 'Home') {
+      e.preventDefault();
+      const target = allVisible[0];
+      target?.focus();
+      target?.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
+    if (e.key === 'End') {
+      e.preventDefault();
+      const target = allVisible[allVisible.length - 1];
+      target?.focus();
+      target?.scrollIntoView({ block: 'nearest' });
+      return;
+    }
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      if (item.is_dir) {
+        if (!isOpen) {
+          isOpen = true;
+        } else if (currentIndex >= 0 && currentIndex < allVisible.length - 1) {
+          const target = allVisible[currentIndex + 1];
+          target?.focus();
+          target?.scrollIntoView({ block: 'nearest' });
+        }
+      }
+      return;
+    }
+
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      if (item.is_dir && isOpen) {
+        isOpen = false;
+      } else {
+        const lastSlash = item.path.lastIndexOf('/');
+        if (lastSlash > 0) {
+          const parentPath = item.path.substring(0, lastSlash);
+          const parentEl = treeContainer?.querySelector<HTMLElement>(`.tree-item-row[data-path="${CSS.escape(parentPath)}"]`);
+          if (parentEl) {
+            parentEl.focus();
+            parentEl.scrollIntoView({ block: 'nearest' });
+          }
+        }
+      }
+      return;
+    }
+
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleSelect();
+      return;
+    }
+
+    if (e.key === 'F2') {
+      e.preventDefault();
+      e.stopPropagation();
+      onRename(item.path, item.name);
+      return;
+    }
+
+    if (e.key === 'Delete') {
+      e.preventDefault();
+      e.stopPropagation();
+      onDelete(item.path, item.is_dir);
+      return;
+    }
+
+    // Typeahead navigation (search visible item by starting letter)
+    if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && e.key !== ' ') {
+      const char = e.key.toLowerCase();
+      const nextMatches = allVisible.slice(currentIndex + 1).concat(allVisible.slice(0, currentIndex));
+      const match = nextMatches.find((el) => {
+        const text = el.querySelector('span')?.textContent?.trim().toLowerCase();
+        return text && text.startsWith(char);
+      });
+      if (match) {
+        e.preventDefault();
+        match.focus();
+        match.scrollIntoView({ block: 'nearest' });
+        return;
+      }
+    }
+  }
 </script>
 
 <svelte:window onclick={() => activeTreeMenuPath.set(null)} />
@@ -113,20 +246,18 @@
     ontouchstart={handleTouchStart}
     ontouchend={handleTouchEnd}
     ontouchmove={handleTouchMove}
-    class="flex items-center group px-2 py-1.5 rounded-lg text-sm sm:text-xs transition cursor-pointer relative {
+    class="tree-item-row flex items-center group px-2 py-1.5 rounded-lg text-sm sm:text-xs transition cursor-pointer relative outline-none focus-visible:ring-1.5 focus-visible:ring-[var(--accent)] {
       !item.is_dir && $activeNote?.path === item.path
         ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-active-text)] font-semibold'
-        : 'text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)]'
+        : 'text-[var(--text-primary)] hover:bg-[var(--sidebar-hover)] focus:bg-[var(--sidebar-hover)]'
     }"
     style="padding-left: {depth * 14 + 8}px;"
-    role="button"
+    role="treeitem"
+    aria-expanded={item.is_dir ? isOpen : undefined}
+    aria-selected={!item.is_dir && $activeNote?.path === item.path}
+    data-path={item.path}
     tabindex="0"
-    onkeydown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleSelect();
-      }
-    }}
+    onkeydown={handleKeydown}
   >
     <!-- Folder arrow toggle or spacer -->
     {#if item.is_dir}
@@ -134,6 +265,7 @@
         onclick={toggleOpen}
         class="mr-1 p-0.5 rounded hover:bg-black/10 transition shrink-0 cursor-pointer"
         aria-label="Toggle folder"
+        tabindex="-1"
       >
         {#if isOpen}
           <ChevronDown size={16} class="opacity-70 sm:size-[14px]" />
@@ -169,6 +301,7 @@
         class="p-1 rounded hover:bg-black/10 transition text-inherit cursor-pointer"
         title="Options"
         aria-label="Options"
+        tabindex="-1"
       >
         <MoreVertical size={18} class="sm:size-[14px]" />
       </button>

@@ -155,6 +155,8 @@
       "bold": "굵게 전환",
       "italic": "기울임꼴 전환",
       "inlineCode": "인라인 코드",
+      "renameFile": "파일 또는 폴더 이름 변경",
+      "deleteFile": "파일 또는 폴더 삭제",
       "save": "현재 노트 저장",
       "undo": "실행 취소",
       "redo": "다시 실행",

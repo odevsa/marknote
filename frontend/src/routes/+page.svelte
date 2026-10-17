@@ -4,7 +4,6 @@
   import Header from '$lib/components/layout/Header.svelte';
   import Sidebar from '$lib/components/layout/Sidebar.svelte';
   import StatusBar from '$lib/components/layout/StatusBar.svelte';
-  import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte';
   import Logo from '$lib/components/ui/Logo.svelte';
   import PromptModal from '$lib/components/ui/PromptModal.svelte';
   import { t } from '$lib/i18n';
@@ -17,15 +16,15 @@
       isLoadingNote,
       loadTree,
       openNote,
-      parseCurrentRoute
+      parseCurrentRoute,
+      promptRename,
+      promptDelete
   } from '$lib/stores/notes';
   import { appSettings, loadAppSettings } from '$lib/stores/settings';
   import { renderMarkdown } from '$lib/utils/markdown';
   import { Clock, Edit3, FileText, LoaderCircle, Plus, Trash2 } from 'lucide-svelte';
 
   let isQuickCreateOpen = $state(false);
-  let isDeleteOpen = $state(false);
-  let noteToDeletePath = $state('');
 
   let recentNotes = $state<RecentNote[]>([]);
   let isLoadingRecent = $state(true);
@@ -111,15 +110,7 @@
 
   function promptDeleteNote(path: string, e: Event) {
     e.stopPropagation();
-    noteToDeletePath = path;
-    isDeleteOpen = true;
-  }
-
-  async function confirmDeleteNote() {
-    if (noteToDeletePath) {
-      await deleteItem(noteToDeletePath);
-      fetchRecentNotes();
-    }
+    promptDelete(path, false);
   }
 
   function renderPreview(content: string): string {
@@ -173,7 +164,19 @@
                 class="group relative rounded-xl border border-[var(--border-color)] bg-[var(--card-bg)] hover:border-[var(--accent)] hover:shadow-lg transition-all duration-200 flex flex-col max-h-256 lg:h-64 overflow-hidden cursor-pointer"
                 role="button"
                 tabindex="0"
-                onkeydown={(e) => e.key === 'Enter' && handleCardClick(note.path)}
+                onkeydown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCardClick(note.path);
+                  } else if (e.key === 'F2') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    promptRename(note.path, note.title);
+                  } else if (e.key === 'Delete') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    promptDelete(note.path, false);
+                  }
+                }}
               >
                 <!-- Card Header -->
                 <div class="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b border-[var(--border-color)] flex items-center justify-between shrink-0 bg-[var(--bg-secondary)]/50">
@@ -250,15 +253,4 @@
   confirmText={$t('common.create')}
   onConfirm={handleQuickCreate}
   onClose={() => (isQuickCreateOpen = false)}
-/>
-
-<!-- Delete Confirm Modal -->
-<ConfirmDialog
-  isOpen={isDeleteOpen}
-  title={$t('common.delete')}
-  message={`${$t('common.confirmDelete')} "${noteToDeletePath}"?`}
-  danger={true}
-  confirmText={$t('common.delete')}
-  onConfirm={confirmDeleteNote}
-  onClose={() => (isDeleteOpen = false)}
 />

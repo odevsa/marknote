@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   import Modal from './Modal.svelte';
   import { t } from '$lib/i18n';
 
@@ -25,10 +26,22 @@
   }: Props = $props();
 
   let inputVal = $state('');
+  let inputRef = $state<HTMLInputElement>();
 
   $effect(() => {
     if (isOpen) {
       inputVal = initialValue;
+      tick().then(() => {
+        if (inputRef) {
+          inputRef.focus();
+          const dotIndex = inputVal.lastIndexOf('.');
+          if (dotIndex > 0) {
+            inputRef.setSelectionRange(0, dotIndex);
+          } else {
+            inputRef.select();
+          }
+        }
+      });
     }
   });
 
@@ -47,6 +60,7 @@
       <label for="prompt-input-field" class="block text-sm font-medium text-[var(--text-muted)]">{label}</label>
     {/if}
     <input
+      bind:this={inputRef}
       id="prompt-input-field"
       type="text"
       bind:value={inputVal}

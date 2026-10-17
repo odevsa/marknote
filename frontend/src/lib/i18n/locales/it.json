@@ -155,6 +155,8 @@
       "bold": "Attiva/disattiva Grassetto",
       "italic": "Attiva/disattiva Corsivo",
       "inlineCode": "Codice in linea",
+      "renameFile": "Rinomina file o cartella",
+      "deleteFile": "Elimina file o cartella",
       "save": "Salva nota corrente",
       "undo": "Annulla",
       "redo": "Ripeti",

@@ -1,19 +1,13 @@
 <script lang="ts">
   import TreeItem from './TreeItem.svelte';
   import PromptModal from '../ui/PromptModal.svelte';
-  import ConfirmDialog from '../ui/ConfirmDialog.svelte';
-  import { fileTree, createItem, renameItem, deleteItem } from '$lib/stores/notes';
+  import { fileTree, createItem, promptRename, promptDelete } from '$lib/stores/notes';
   import { t } from '$lib/i18n';
 
   let isCreateFileOpen = $state(false);
   let isCreateFolderOpen = $state(false);
-  let isRenameOpen = $state(false);
-  let isDeleteOpen = $state(false);
 
   let targetParentPath = $state('');
-  let targetItemPath = $state('');
-  let currentItemName = $state('');
-  let itemToDelete = $state({ path: '', isDir: false });
 
   export function openCreateRootFile() {
     targetParentPath = '';
@@ -36,14 +30,11 @@
   }
 
   function handleRename(path: string, currentName: string) {
-    targetItemPath = path;
-    currentItemName = currentName;
-    isRenameOpen = true;
+    promptRename(path, currentName);
   }
 
   function handleDelete(path: string, isDir: boolean) {
-    itemToDelete = { path, isDir };
-    isDeleteOpen = true;
+    promptDelete(path, isDir);
   }
 
   async function confirmCreateFile(name: string) {
@@ -60,21 +51,9 @@
     const fullPath = targetParentPath ? `${targetParentPath}/${folderName}` : folderName;
     await createItem(fullPath, true);
   }
-
-  async function confirmRename(newName: string) {
-    const parent = targetItemPath.includes('/')
-      ? targetItemPath.substring(0, targetItemPath.lastIndexOf('/'))
-      : '';
-    const newPath = parent ? `${parent}/${newName}` : newName;
-    await renameItem(targetItemPath, newPath);
-  }
-
-  async function confirmDelete() {
-    await deleteItem(itemToDelete.path);
-  }
 </script>
 
-<div class="py-2 space-y-0.5">
+<div class="file-tree-container py-2 space-y-0.5" role="tree" tabindex="-1">
   {#if $fileTree.length === 0}
     <div class="px-3 py-6 text-center text-xs text-[var(--text-muted)]">
       {$t('common.selectNoteToView')}
@@ -111,24 +90,4 @@
   confirmText={$t('common.create')}
   onConfirm={confirmCreateFolder}
   onClose={() => (isCreateFolderOpen = false)}
-/>
-
-<PromptModal
-  isOpen={isRenameOpen}
-  title={$t('common.rename')}
-  initialValue={currentItemName}
-  placeholder="New name..."
-  confirmText={$t('common.save')}
-  onConfirm={confirmRename}
-  onClose={() => (isRenameOpen = false)}
-/>
-
-<ConfirmDialog
-  isOpen={isDeleteOpen}
-  title={$t('common.delete')}
-  message={`${$t('common.confirmDelete')} "${itemToDelete.path}"?`}
-  danger={true}
-  confirmText={$t('common.delete')}
-  onConfirm={confirmDelete}
-  onClose={() => (isDeleteOpen = false)}
 />

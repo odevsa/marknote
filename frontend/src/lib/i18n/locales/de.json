@@ -155,6 +155,8 @@
       "bold": "Fett umschalten",
       "italic": "Kursiv umschalten",
       "inlineCode": "Inline-Code",
+      "renameFile": "Datei oder Ordner umbenennen",
+      "deleteFile": "Datei oder Ordner löschen",
       "save": "Aktuelle Notiz speichern",
       "undo": "Rückgängig",
       "redo": "Wiederholen",

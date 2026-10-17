@@ -155,6 +155,8 @@
       "bold": "Vetgedrukt in-/uitschakelen",
       "italic": "Cursief in-/uitschakelen",
       "inlineCode": "Inline code",
+      "renameFile": "Bestand of map hernoemen",
+      "deleteFile": "Bestand of map verwijderen",
       "save": "Huidige notitie opslaan",
       "undo": "Ongedaan maken",
       "redo": "Opnieuw",

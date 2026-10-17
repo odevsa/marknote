@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   import Modal from './Modal.svelte';
   import { t } from '$lib/i18n';
 
@@ -22,6 +23,16 @@
     onClose
   }: Props = $props();
 
+  let confirmBtnRef = $state<HTMLButtonElement>();
+
+  $effect(() => {
+    if (isOpen) {
+      tick().then(() => {
+        confirmBtnRef?.focus();
+      });
+    }
+  });
+
   function handleConfirm() {
     onConfirm();
     onClose();
@@ -42,6 +53,7 @@
         {$t('common.cancel')}
       </button>
       <button
+        bind:this={confirmBtnRef}
         type="button"
         onclick={handleConfirm}
         class="px-4 py-2 text-sm rounded-lg transition {danger ? 'bg-[var(--danger)] text-white hover:opacity-90' : 'bg-[var(--accent)] hover:bg-[var(--accent-hover)] text-[var(--accent-text)]'}"

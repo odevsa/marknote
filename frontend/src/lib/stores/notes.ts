@@ -62,6 +62,58 @@ export const pendingTargetRoute = writable<{ path: string | null; mode?: ViewMod
 export const showDraftRecoveryModal = writable<boolean>(false);
 export const pendingDraftData = writable<{ path: string; mode?: ViewMode; draftContent: string; serverContent: string } | null>(null);
 
+// Global Rename & Delete Modals
+export interface RenameModalState {
+  isOpen: boolean;
+  path: string;
+  currentName: string;
+}
+
+export interface DeleteModalState {
+  isOpen: boolean;
+  path: string;
+  isDir: boolean;
+}
+
+export const renameModalState = writable<RenameModalState>({
+  isOpen: false,
+  path: '',
+  currentName: '',
+});
+
+export const deleteModalState = writable<DeleteModalState>({
+  isOpen: false,
+  path: '',
+  isDir: false,
+});
+
+export function promptRename(path: string, currentName?: string): void {
+  const name =
+    currentName ||
+    (path.includes('/') ? path.substring(path.lastIndexOf('/') + 1) : path);
+  renameModalState.set({
+    isOpen: true,
+    path,
+    currentName: name,
+  });
+}
+
+export function promptDelete(path: string, isDir = false): void {
+  deleteModalState.set({
+    isOpen: true,
+    path,
+    isDir,
+  });
+}
+
+export function closeRenameModal(): void {
+  renameModalState.update((s) => ({ ...s, isOpen: false }));
+}
+
+export function closeDeleteModal(): void {
+  deleteModalState.update((s) => ({ ...s, isOpen: false }));
+}
+
 export const isDirty = derived(activeNote, ($note) => {
   if (!$note) return false;
   return $note.content !== $note.initialContent;
@@ -338,8 +390,37 @@ export async function renameItem(
     await loadTree();
 
     const current = get(activeNote);
-    if (current && current.path === oldPath) {
-      activeNote.update((n) => (n ? { ...n, path: newPath } : null));
+    if (current) {
+      let updatedPath: string | null = null;
+      if (current.path === oldPath) {
+        updatedPath = newPath;
+      } else if (current.path.startsWith(`${oldPath}/`)) {
+        updatedPath = `${newPath}${current.path.slice(oldPath.length)}`;
+      }
+
+      if (updatedPath) {
+        const oldNotePath = current.path;
+        activeNote.update((n) => (n ? { ...n, path: updatedPath } : null));
+
+        // Migrate local draft if one existed under old path
+        const oldDraft = getLocalDraft(oldNotePath);
+        if (oldDraft !== null) {
+          clearLocalDraft(oldNotePath);
+          saveLocalDraft(updatedPath, oldDraft);
+        }
+
+        if (typeof window !== "undefined") {
+          const mode = get(editorViewMode) || "split";
+          const newUrl = getRouteUrl(updatedPath, mode);
+          if (window.location.pathname !== newUrl) {
+            window.history.replaceState(
+              { path: updatedPath, mode },
+              "",
+              newUrl,
+            );
+          }
+        }
+      }
     }
     return true;
   } catch (err) {
@@ -359,6 +440,9 @@ export async function deleteItem(path: string): Promise<boolean> {
       (current.path === path || current.path.startsWith(`${path}/`))
     ) {
       activeNote.set(null);
+      if (typeof window !== "undefined" && window.location.pathname !== "/") {
+        window.history.replaceState({}, "", "/");
+      }
     }
     return true;
   } catch (err) {

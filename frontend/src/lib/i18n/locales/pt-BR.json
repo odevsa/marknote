@@ -155,6 +155,8 @@
       "bold": "Alternar Negrito",
       "italic": "Alternar Itálico",
       "inlineCode": "Código Inline",
+      "renameFile": "Renomear arquivo ou pasta",
+      "deleteFile": "Excluir arquivo ou pasta",
       "save": "Salvar nota atual",
       "undo": "Desfazer",
       "redo": "Refazer",

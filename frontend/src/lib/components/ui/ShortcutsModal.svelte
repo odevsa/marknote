@@ -86,6 +86,8 @@
     { id: 'find', category: 'search', keys: [['Mod', 'F']] },
 
     // General & System
+    { id: 'renameFile', category: 'general', keys: [['F2']] },
+    { id: 'deleteFile', category: 'general', keys: [['Delete']] },
     { id: 'save', category: 'general', keys: [['Mod', 'S']] },
     { id: 'openSettings', category: 'general', keys: [['Mod', ',']] },
     { id: 'openShortcuts', category: 'general', keys: [['F1'], ['Mod', '/']] },
